@@ -1,0 +1,136 @@
+@use "_spacing";
+html {
+  overflow: hidden;
+}
+.hackajur {
+  .group {
+    &:hover,
+    &:active {
+      &.h-pt-5 {
+        padding-top: 21px !important;
+      }
+      &.group-hover,
+      .group-hover {
+        &-bg {
+          background-color: var(--v-bg-base);
+        }
+        &-d-block {
+          display: block !important;
+        }
+      }
+    }
+  }
+  .hover- {
+    &border {
+      &-white:focus-visible {
+        outline: white solid 1px !important;
+      }
+      &:focus-visible {
+        outline: var(--v-primary-base) solid 1px !important;
+      }
+      &:hover {
+        border: 1px solid;
+      }
+    }
+  }
+}
+.theme--dark.v-text-field--solo > .v-input__control > .v-input__slot {
+  background: #252831;
+}
+.theme--dark.v-sheet {
+  background: #252831;
+}
+.hackajur > .v-menu__content.theme--dark > .v-list {
+  background: #161922 !important;
+}
+.hackajur .rounded-base {
+  border-radius: 18px !important;
+}
+.hackajur p {
+  margin: 0;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: #000;
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+}
+.theme--dark input:-webkit-autofill {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0px 1000px #252831 inset;
+}
+a {
+  text-decoration: none;
+}
+.theme--dark {
+  .apexcharts-menu.apexcharts-menu-open {
+    background-color: #252831 !important;
+    border-color: #252831 !important;
+  }
+  .apexcharts-theme-light .apexcharts-menu-item:hover {
+    background: #1c1e25;
+  }
+}
+::-webkit-scrollbar {
+  border-radius: 8px;
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background: #b5b5b5;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  width: 4px;
+  height: 4px;
+  background-color: #7f7f7f;
+  border: 2px solid #b5b5b5;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.h-full {
+  height: 100% !important;
+}
+.w-full {
+  width: 100%;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.text-decoration-none {
+  text-decoration: none;
+}
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+
+html,
+body,
+#app {
+  width: 100% !important;
+  // height: 100% !important;
+  max-height: 100% !important;
+  margin: 0;
+  padding: 0;
+
+  // -webkit-font-smoothing: antialiased;
+}
+* {
+  font-family: "Montserrat", sans-serif !important;
+  box-sizing: border-box;
+}
