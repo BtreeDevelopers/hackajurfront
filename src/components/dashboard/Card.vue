@@ -13,9 +13,7 @@ const emit = defineEmits<{
   <div class="card" @click="emit('click')">
     <div class="base">
       <p class="title">{{ title }}</p>
-      <ArrowDownGreenIcon
-        :class="{ 'arrow-rotate': expandir }"
-      ></ArrowDownGreenIcon>
+      <ArrowDownGreenIcon class="arrow" :class="{ 'arrow-rotate': expandir }"></ArrowDownGreenIcon>
     </div>
     <div class="body" v-if="expandir" @click.prevent.stop>
       <slot></slot>
@@ -30,17 +28,25 @@ const emit = defineEmits<{
   background: #f0f0f0;
   padding: 40px 30px;
   cursor: pointer;
+
+  .arrow {
+    transition: transform 0.5s;
+  }
+
   .arrow-rotate {
     transform: rotate(180deg);
   }
+
   .body {
     margin-top: 10px;
   }
+
   .base {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
+
   .title {
     color: #1b7e6c;
     font-size: 18px;

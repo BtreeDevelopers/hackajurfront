@@ -1,142 +1,176 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Timeline from "./Timeline.vue";
 import Card from "./Card.vue";
-const active = ref(2);
+import Button from "../Button.vue";
+
 const expandir = ref<string>("");
-const tamanhoExpansao: Record<string, { size: string; id: number }> = {
-  conhecimento: { size: "50px", id: 1 },
-  renegocio: { size: "30px", id: 2 },
-  proposta: { size: "30px", id: 3 },
-  assinatura: { size: "40px", id: 4 },
-};
 function selectCard(card: string) {
   expandir.value = expandir.value === card ? "" : card;
 }
+const etapaCompleta = ref(2);
+
 </script>
 
 <template>
-  <div class="detalhamento">
-    <Timeline :active="active" class="line-time mr-10" :expandir="tamanhoExpansao[expandir]"></Timeline>
-    <div class="cards">
-      <Card class="mb-7" title="Conhecimento de dívida" :expandir="expandir === 'conhecimento'"
-        @click="selectCard('conhecimento')">
-        <div class="detail-conhecimento">
-          <p class="text">
-            Preencha as informações necessárias para verificar as opções de
-            negociação disponíveis.
-          </p>
-          <button class="action">Iniciar</button>
-        </div>
-      </Card>
-      <Card class="mb-7" title="Proposta de Renegociação" :expandir="expandir === 'renegocio'"
-        @click="selectCard('renegocio')">
-        <div class="detail-conhecimento">
-          <p class="text">
-            Preencha as informações necessárias para verificar as opções de
-            negociação disponíveis.
-          </p>
-          <button class="action">Iniciar</button>
-        </div>
-      </Card>
-      <Card class="mb-7" title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'"
-        @click="selectCard('proposta')">
-        <div class="detail-conhecimento">
-          <p class="text">
-            Preencha as informações necessárias para verificar as opções de
-            negociação disponíveis.
-          </p>
-          <button class="action">Iniciar</button>
-        </div>
-      </Card>
-      <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')">
-        <div class="detail-conhecimento">
-          <p class="text">
-            Preencha as informações necessárias para verificar as opções de
-            negociação disponíveis.
-          </p>
-          <button class="action">Iniciar</button>
-        </div>
-      </Card>
+  <div class="timeline">
+    <div class="timeline__item">
+      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 1 }">1</div>
+      <div class="timeline__card-content">
+        <Card title="Conhecimento de dívida" :expandir="expandir === 'conhecimento'" @click="selectCard('conhecimento')">
+          <div class="detail-conhecimento">
+            <div class="w-full">
+              <p class="text">
+                Preencha as informações necessárias para verificar as opções de
+                negociação disponíveis.
+              </p>
+            </div>
+            <div class="w-full action">
+              <Button>Iniciar</Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+    <div class="timeline__step-line">
+    </div>
+    <div class="timeline__item">
+      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 2 }">2</div>
+      <div class="timeline__card-content">
+        <Card title="Proposta de Renegociação" :expandir="expandir === 'renegocio'" @click="selectCard('renegocio')">
+          <div class="detail-conhecimento">
+            <p class="text">
+              Preencha as informações necessárias para verificar as opções de
+              negociação disponíveis.
+            </p>
+            <button class="action">Iniciar</button>
+          </div>
+        </Card>
+      </div>
+    </div>
+    <div class="timeline__step-line">
+    </div>
+    <div class="timeline__item">
+      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 3 }">3</div>
+      <div class="timeline__card-content">
+        <Card title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'" @click="selectCard('proposta')">
+          <div class="detail-conhecimento">
+            <p class="text">
+              Preencha as informações necessárias para verificar as opções de
+              negociação disponíveis.
+            </p>
+            <button class="action">Iniciar</button>
+          </div>
+        </Card>
+      </div>
+    </div>
+    <div class="timeline__step-line">
+    </div>
+    <div class="timeline__item">
+      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 4 }">4</div>
+      <div class="timeline__card-content">
+        <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')">
+          <div class="detail-conhecimento">
+            <p class="text">
+              Preencha as informações necessárias para verificar as opções de
+              negociação disponíveis.
+            </p>
+            <button class="action">Iniciar</button>
+          </div>
+        </Card>
+      </div>
+    </div>
+    <div class="timeline__step-line">
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.detalhamento {
-  height: 100%;
+<style lang="scss">
+.detail-conhecimento {
   display: flex;
-  max-height: 500px;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
 
-  .cards {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: space-between;
+  .text {
+    width: 60%;
+    color: #02a64c;
+    font-size: 14px;
+    font-weight: 500;
+  }
 
-    .detail-conhecimento {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
-
-      .text {
-        width: 60%;
-        color: #02a64c;
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      .action {
-        border: none;
-        border-radius: 10px;
-        background: #fc0;
-        color: #1b7e6c;
-        font-size: 12px;
-        font-weight: 700;
-        width: 150px;
-        height: 40px;
-        cursor: pointer;
-
-        &:hover {
-          background: #d8ad00;
-        }
-
-        &:active {
-          background: #fc0;
-        }
-      }
-    }
+  .action {
+    text-align: end;
   }
 }
 
 @media (max-width: 750px) {
-  .detalhamento {
-    max-height: fit-content;
-  }
-
-  .line-time {
-    display: none;
+  .detail-conhecimento {
+    .text {
+      width: 100%;
+      margin-bottom: 20px;
+    }
   }
 }
 
-@media (max-width: 600px) {
-  .line-time {
-    display: none;
-  }
+.timeline {
+  .timeline__item {
+    display: flex;
+    position: relative;
 
-  .detalhamento {
-    .cards {
-      .detail-conhecimento {
-        flex-direction: column;
-        align-items: baseline;
+    &:first-child:before {
+      top: 45px;
+    }
 
-        .text {
-          width: 100%;
-          margin-bottom: 20px;
-        }
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 1px;
+      height: 100%;
+      background-color: #ddd;
+      left: 19px;
+      z-index: 0;
+
+    }
+
+    &:nth-last-child(2):before {
+      height: 45px;
+    }
+
+    .timeline__card-number {
+      flex-shrink: 0;
+      margin: 40px 10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #D9D9D9;
+      text-align: center;
+      font-size: 14px;
+      color: #055550;
+      font-weight: bold;
+      line-height: 20px;
+      z-index: 1;
+
+      &.etapaCompleta {
+        background-color: #055550;
+        color: #FFF;
       }
     }
+
+    .timeline__card-content {
+      flex-grow: 1;
+      min-width: 0;
+    }
+  }
+
+  .timeline__step-line {
+    height: 32px;
+    border-left: 1px solid #dddddd;
+    margin-left: 19px;
+  }
+
+  .timeline__step-line:last-child {
+    display: none;
   }
 }
 </style>
