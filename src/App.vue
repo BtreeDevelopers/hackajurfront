@@ -7,7 +7,7 @@ import Footer from "@/components/Footer.vue";
   <div class="hackajur">
     <Header></Header>
 
-    <RouterView></RouterView>
+    <RouterView class="base-router"></RouterView>
 
     <Footer></Footer>
   </div>
@@ -19,5 +19,9 @@ import Footer from "@/components/Footer.vue";
   display: flex;
   flex-direction: column;
   overflow: auto;
+}
+
+.base-router {
+  flex-grow: 1;
 }
 </style>
