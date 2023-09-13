@@ -16,7 +16,7 @@ declare module 'vue-signature-pad' {
       clearSignature(): void;
       // eslint-disable-next-line @typescript-eslint/ban-types
       mergeImagesAndSignature(signature: object | string): void;
-      addImages(images: []): void;
+      addImages(images: any[]): void;
       lockSignaturePad(): void;
       openSignaturePad(): void;
       getPropImagesAndCacheImages(): void;

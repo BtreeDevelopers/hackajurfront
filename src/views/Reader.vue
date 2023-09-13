@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type VueSignaturePad from 'vue-signature-pad';
+import Signature from '@/components/Signature.vue';
 
-const signaturePad = ref<VueSignaturePad | null>(null);
-function undo() {
-  signaturePad.value!.undoSignature();
+const signaturePad = ref<InstanceType<typeof Signature> | null>(null);
+function clear() {
+  signaturePad.value!.clear();
 }
 function save() {
-  const { isEmpty, data } = signaturePad.value!.saveSignature();
-  console.log(isEmpty);
-  console.log(data);
+  signaturePad.value!.save()
 }
 
 </script>
 
 <template>
   <div class="reader">
-    <VueSignaturePad ref="signaturePad" width="300px" height="200px" />
+    <Signature ref="signaturePad" width="300px" height="200px" />
     <div>
       <button @click="save">Save</button>
-      <button @click="undo">Undo</button>
+      <button @click="clear">Undo</button>
     </div>
   </div>
 </template>
