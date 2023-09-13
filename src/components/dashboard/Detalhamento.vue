@@ -17,18 +17,10 @@ function selectCard(card: string) {
 
 <template>
   <div class="detalhamento">
-    <Timeline
-      :active="active"
-      class="mr-10"
-      :expandir="tamanhoExpansao[expandir]"
-    ></Timeline>
+    <Timeline :active="active" class="line-time mr-10" :expandir="tamanhoExpansao[expandir]"></Timeline>
     <div class="cards">
-      <Card
-        class="mb-7"
-        title="Conhecimento de dívida"
-        :expandir="expandir === 'conhecimento'"
-        @click="selectCard('conhecimento')"
-      >
+      <Card class="mb-7" title="Conhecimento de dívida" :expandir="expandir === 'conhecimento'"
+        @click="selectCard('conhecimento')">
         <div class="detail-conhecimento">
           <p class="text">
             Preencha as informações necessárias para verificar as opções de
@@ -37,12 +29,8 @@ function selectCard(card: string) {
           <button class="action">Iniciar</button>
         </div>
       </Card>
-      <Card
-        class="mb-7"
-        title="Proposta de Renegociação"
-        :expandir="expandir === 'renegocio'"
-        @click="selectCard('renegocio')"
-      >
+      <Card class="mb-7" title="Proposta de Renegociação" :expandir="expandir === 'renegocio'"
+        @click="selectCard('renegocio')">
         <div class="detail-conhecimento">
           <p class="text">
             Preencha as informações necessárias para verificar as opções de
@@ -51,12 +39,8 @@ function selectCard(card: string) {
           <button class="action">Iniciar</button>
         </div>
       </Card>
-      <Card
-        class="mb-7"
-        title="Aceitar/Recusar Proposta"
-        :expandir="expandir === 'proposta'"
-        @click="selectCard('proposta')"
-      >
+      <Card class="mb-7" title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'"
+        @click="selectCard('proposta')">
         <div class="detail-conhecimento">
           <p class="text">
             Preencha as informações necessárias para verificar as opções de
@@ -65,11 +49,7 @@ function selectCard(card: string) {
           <button class="action">Iniciar</button>
         </div>
       </Card>
-      <Card
-        title="Assinaturas ao contrato"
-        :expandir="expandir === 'assinatura'"
-        @click="selectCard('assinatura')"
-      >
+      <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')">
         <div class="detail-conhecimento">
           <p class="text">
             Preencha as informações necessárias para verificar as opções de
@@ -86,21 +66,27 @@ function selectCard(card: string) {
 .detalhamento {
   height: 100%;
   display: flex;
+  max-height: 500px;
+
   .cards {
     display: flex;
     flex-direction: column;
     width: 100%;
+    justify-content: space-between;
+
     .detail-conhecimento {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 20px;
+
       .text {
         width: 60%;
         color: #02a64c;
         font-size: 14px;
         font-weight: 500;
       }
+
       .action {
         border: none;
         border-radius: 10px;
@@ -111,11 +97,43 @@ function selectCard(card: string) {
         width: 150px;
         height: 40px;
         cursor: pointer;
+
         &:hover {
           background: #d8ad00;
         }
+
         &:active {
           background: #fc0;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 750px) {
+  .detalhamento {
+    max-height: fit-content;
+  }
+
+  .line-time {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .line-time {
+    display: none;
+  }
+
+  .detalhamento {
+    .cards {
+      .detail-conhecimento {
+        flex-direction: column;
+        align-items: baseline;
+
+        .text {
+          width: 100%;
+          margin-bottom: 20px;
         }
       }
     }
