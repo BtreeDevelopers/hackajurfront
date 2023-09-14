@@ -1,29 +1,11 @@
-<template>
-    <div class="b-menu" ref="menuBase" v-click-outside="{
-        handler: closeMenu,
-        include: () => [...allChildren()],
-    }">
-        <div class="component" ref="activator" @click="showMenu = !showMenu">
-            <slot></slot>
-        </div>
-
-        <div class="menu" :class="{ 'show-modal': showMenu }" :style="{ top: top + 'px', right: 0 }" ref="menuside" @click="() => {
-            closeOnClick && closeMenu('teste');
-        }
-            ">
-            <slot name="menu"></slot>
-        </div>
-    </div>
-</template>
-  
-<script>
+<script lang="ts">
 export default {
     props: {
         show: Boolean,
         direction: {
             type: String,
             default: "bottom",
-            validator(value) {
+            validator(value: string) {
                 return ["bottom", "right"].includes(value);
             },
         },
@@ -88,10 +70,10 @@ export default {
     methods: {
         calcLeft() {
             this.$nextTick(() => {
-                const activatorWidth = this.$refs.activator.clientWidth;
-                const activatorTop = this.$refs.activator.getBoundingClientRect().left;
-                const sizeEl = this.$refs.menuside.clientWidth;
-                const screenSize = document.querySelector("body").clientWidth;
+                const activatorWidth = (this.$refs.activator as any).clientWidth;
+                const activatorTop = (this.$refs.activator as any).getBoundingClientRect().left;
+                const sizeEl = (this.$refs.menuside as any).clientWidth;
+                const screenSize = document.querySelector("body")!.clientWidth;
                 const calc = activatorTop + activatorWidth + sizeEl + screenSize * 0.02;
                 this.left = 0;
                 if (this.direction === "right") {
@@ -109,10 +91,10 @@ export default {
         },
         calcTop() {
             this.$nextTick(() => {
-                const activatorHeight = this.$refs.activator.clientHeight;
-                const activatorTop = this.$refs.activator.getBoundingClientRect().top;
-                const sizeEl = this.$refs.menuside.clientHeight;
-                const screenSize = document.querySelector("body").clientHeight;
+                const activatorHeight = (this.$refs.activator as any).clientHeight;
+                const activatorTop = (this.$refs.activator as any).getBoundingClientRect().top;
+                const sizeEl = (this.$refs.menuside as any).clientHeight;
+                const screenSize = document.querySelector("body")!.clientHeight;
                 const calc =
                     activatorTop + activatorHeight + sizeEl + screenSize * 0.02;
                 this.top = 0;
@@ -133,7 +115,7 @@ export default {
             if (!this.$el) return [];
             return this.searchChildren(this.$el.children);
         },
-        searchChildren(children) {
+        searchChildren(children: any[]): any {
             const results = [];
             for (let index = 0; index < children.length; index++) {
                 const child = children[index];
@@ -151,6 +133,26 @@ export default {
     },
 };
 </script>
+
+<template>
+    <div class="b-menu" ref="menuBase" v-click-outside="{
+        handler: closeMenu,
+        include: () => [...allChildren()],
+    }">
+        <div class="component" ref="activator" @click="showMenu = !showMenu">
+            <slot></slot>
+        </div>
+
+        <div class="menu" :class="{ 'show-modal': showMenu }" :style="{ top: top + 'px', right: 0 }" ref="menuside" @click="() => {
+            closeOnClick && closeMenu();
+        }
+            ">
+            <slot name="menu"></slot>
+        </div>
+    </div>
+</template>
+  
+
   
 <style lang="scss">
 .b-menu {
