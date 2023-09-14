@@ -1,9 +1,9 @@
 import divida from "@/models/dividas";
 import { IResponseLogin } from "@/models/user";
+import { setToken, removerTokenCookies } from "@/services/tokenService";
 import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => ({
-    token: "",
     _id: "",
     nome: "",
     email: "",
@@ -19,7 +19,7 @@ export const useUserStore = defineStore("user", {
   }),
   actions: {
     setUser(user: IResponseLogin) {
-      this.token = user.token;
+      setToken(user.token);
       this._id = user.user._id;
       this.nome = user.user.nome;
       this.email = user.user.email;
@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", {
       const copyLocal = { city: this.local.city, uf: this.local.uf };
       this.$reset();
       this.local = copyLocal;
-
+      removerTokenCookies();
       this.$router.push("/sign");
     },
   },

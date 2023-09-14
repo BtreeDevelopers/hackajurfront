@@ -4,6 +4,7 @@ import Sign from "@/views/Sign.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Profile from "@/views/Profile.vue";
 import Reader from "@/views/Reader.vue";
+import { obterAccessToken } from "@/services/tokenService";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -25,6 +26,7 @@ const routes: RouteRecordRaw[] = [
     component: Dashboard,
     meta: {
       header: "user",
+      auth: true,
     },
   },
   {
@@ -32,6 +34,7 @@ const routes: RouteRecordRaw[] = [
     component: Profile,
     meta: {
       header: "user",
+      auth: true,
     },
   },
   {
@@ -39,6 +42,7 @@ const routes: RouteRecordRaw[] = [
     component: Reader,
     meta: {
       header: "user",
+      auth: true,
     },
   },
 ];
@@ -46,4 +50,19 @@ const routes: RouteRecordRaw[] = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, _, next) => {
+  const isAuth = !!obterAccessToken();
+  if (to.meta.auth && !isAuth) {
+    return next({
+      path: "/sign",
+    });
+  }
+  if (!to.meta.auth && isAuth) {
+    return next({
+      path: "/dashboard",
+    });
+  }
+  return next();
 });

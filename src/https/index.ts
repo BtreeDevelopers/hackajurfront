@@ -1,12 +1,11 @@
+import { obterAccessToken } from "@/services/tokenService";
 import axios from "axios";
 const http = axios.create({
   baseURL: `${process.env.URL_BASE}`,
 });
 
 http.interceptors.request.use(async (config: any) => {
-  const { useUserStore } = await import("../stores/user");
-  const userStore = useUserStore();
-  const token = userStore.token;
+  const token = obterAccessToken();
   if (token) {
     (config.headers as any).Authorization = `Bearer ${token}`;
   }
