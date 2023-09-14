@@ -6,9 +6,7 @@ import Footer from "@/components/Footer.vue";
 <template>
   <div class="hackajur">
     <Header></Header>
-
     <RouterView class="base-router"></RouterView>
-
     <Footer></Footer>
   </div>
 </template>

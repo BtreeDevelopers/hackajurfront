@@ -70,7 +70,7 @@ onMounted(() => {
               <div class="base-menu">
                 <RouterLink to="/dashboard" class="texto historico">Histórico de dividas</RouterLink>
                 <RouterLink to="/profile" class="texto perfil">Perfil</RouterLink>
-                <RouterLink to="/sign" class="texto sair">Sair</RouterLink>
+                <a @click="userStore.clearUser" class="texto sair">Sair</a>
               </div>
             </template>
           </Menu>

@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { useTaxIdMask } from "@/composables/TaxIdMask";
 import CreateAccount from "@/components/modais/CreateAccount.vue";
+import Button from "@/components/Button.vue";
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import TextFieldIcon from "@/components/TextFieldIcon.vue";
 import EyeIcon from "@/components/icons/EyeIcon.vue";
+import { login } from "@/services/hacka"
+import { IResponseLogin } from "@/models/user"
+import { useUserStore } from "@/stores/user"
 
-const { updateCpfCnpj: loginUpdateCpfCnpj } = useTaxIdMask();
+const userStore = useUserStore();
+
+const { updateCpfCnpj: loginUpdateCpfCnpj, cpfCnpjWithoutMask: loginTaxId } = useTaxIdMask();
 const { updateCpfCnpj: logonUpdateCpfCnpj, cpfCnpj } = useTaxIdMask();
 const modal = ref(false);
 const screenToShow = ref("login");
@@ -16,6 +22,7 @@ function changeScreen() {
 const router = useRouter();
 const route = useRoute();
 const show = ref(false);
+const loading = ref(false);
 const senha = ref("");
 onMounted(() => {
   if (route.query.create) {
@@ -30,6 +37,22 @@ watch(() => modal.value, (value) => {
     })
   }
 })
+
+async function realizarLogin() {
+  try {
+    loading.value = true;
+    const dataLogin = await login<IResponseLogin>({
+      cpf: loginTaxId.value,
+      senha: senha.value
+    });
+    userStore.setUser(dataLogin);
+    router.push('/dashboard')
+  } catch (e) {
+    //TODO ERRO
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -45,9 +68,9 @@ watch(() => modal.value, (value) => {
           <EyeIcon color="#055550"></EyeIcon>
         </TextFieldIcon>
         <p class="destaque cursor-pointer mb-6">Esqueci a senha</p>
-        <button class="action" @click="router.push('/dashboard')">
+        <Button @click="realizarLogin" color="#02a64c" color-destaque="#01612c" class="buttons" :loading="loading">
           Acessar conta
-        </button>
+        </Button>
       </div>
       <div class="card create space" :class="{ screenToShow: screenToShow === 'create' }">
         <div>
@@ -72,6 +95,11 @@ watch(() => modal.value, (value) => {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  .buttons {
+    color: #fff;
+    width: 100%;
+  }
 
   .button-swap {
     display: none;

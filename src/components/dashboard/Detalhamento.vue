@@ -20,8 +20,7 @@ const etapaCompleta = ref(2);
           <div class="detail-conhecimento">
             <div class="w-full">
               <p class="text">
-                Preencha as informações necessárias para verificar as opções de
-                negociação disponíveis.
+                Preencha as informações necessárias para reconhecer a dívida e iniciar a negociação dela.
               </p>
             </div>
             <div class="w-full action">
@@ -38,11 +37,14 @@ const etapaCompleta = ref(2);
       <div class="timeline__card-content">
         <Card title="Proposta de Renegociação" :expandir="expandir === 'renegocio'" @click="selectCard('renegocio')">
           <div class="detail-conhecimento">
-            <p class="text">
-              Preencha as informações necessárias para verificar as opções de
-              negociação disponíveis.
-            </p>
-            <button class="action">Iniciar</button>
+            <div class="w-full">
+              <p class="text">
+                Preencha as informações necessárias para verificar as opções de negociação disponíveis.
+              </p>
+            </div>
+            <div class="w-full action">
+              <Button>Iniciar</Button>
+            </div>
           </div>
         </Card>
       </div>
@@ -54,11 +56,14 @@ const etapaCompleta = ref(2);
       <div class="timeline__card-content">
         <Card title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'" @click="selectCard('proposta')">
           <div class="detail-conhecimento">
-            <p class="text">
-              Preencha as informações necessárias para verificar as opções de
-              negociação disponíveis.
-            </p>
-            <button class="action">Iniciar</button>
+            <div class="w-full">
+              <p class="text">
+                Clique para visualizar as propostas recebidas.
+              </p>
+            </div>
+            <div class="w-full action">
+              <Button>Visualizar propostas</Button>
+            </div>
           </div>
         </Card>
       </div>
@@ -70,11 +75,16 @@ const etapaCompleta = ref(2);
       <div class="timeline__card-content">
         <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')">
           <div class="detail-conhecimento">
-            <p class="text">
-              Preencha as informações necessárias para verificar as opções de
-              negociação disponíveis.
-            </p>
-            <button class="action">Iniciar</button>
+            <div class="w-full">
+              <p class="text">
+                Clique para visualizar as propostas recebidas.
+              </p>
+            </div>
+            <div class="w-full action">
+              <Button class="mr-5">Assinatura Avalista</Button>
+              <Button class="mr-5">Assinatura Fiador</Button>
+              <Button>Assinar contrato</Button>
+            </div>
           </div>
         </Card>
       </div>

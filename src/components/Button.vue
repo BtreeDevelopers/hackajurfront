@@ -4,6 +4,7 @@ withDefaults(
     color?: string;
     colorDestaque?: string;
     width?: string;
+    loading?: boolean
   }>(),
   {
     color: "#fc0",
@@ -17,7 +18,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <button @click="emit('click')" class="button"><slot></slot></button>
+  <button @click="loading ? null : emit('click')" class="button loading" :disabled="loading">
+    <div v-if="loading">loading</div>
+    <slot v-else></slot>
+  </button>
 </template>
 
 <style scoped lang="scss">
@@ -31,9 +35,11 @@ const emit = defineEmits<{
   width: v-bind(width);
   height: 40px;
   cursor: pointer;
-  &:hover {
+
+  &:not(.loading):hover {
     background: v-bind(colorDestaque);
   }
+
   &:active {
     background: v-bind(color);
   }
