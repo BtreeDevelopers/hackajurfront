@@ -2,6 +2,7 @@
 import "@/assets/modal.scss";
 import CloseIcon from "../icons/CloseIcon.vue";
 import TextField from "../TextField.vue";
+import Checkbox from "../Checkbox.vue";
 import { ref, watch } from "vue";
 import TextFieldIcon from "@/components/TextFieldIcon.vue";
 import EyeIcon from "@/components/icons/EyeIcon.vue";
@@ -51,13 +52,19 @@ async function fechar() {
             @click:icon="show = !show" v-model="senha" icon-functional>
             <EyeIcon></EyeIcon>
           </TextFieldIcon>
-          <p class="mb-2">
-            Li e concordo com os <span>Termos</span> e
-            <span>Politica de Privacidade</span>.
-          </p>
-          <p class="mb-5">
-            Eu concordo em receber oportunidades e lembretes por e-mail e SMS.
-          </p>
+          <div class="options">
+            <Checkbox background-color="#fff" color="#1B7E6C" size="15px" class="mt-1"></Checkbox>
+            <p class="mb-2">
+              Li e concordo com os <span>Termos</span> e
+              <span>Politica de Privacidade</span>.
+            </p>
+          </div>
+          <div class="options mb-5">
+            <Checkbox background-color="#fff" color="#1B7E6C" size="15px" class="mt-1"></Checkbox>
+            <p>
+              Eu concordo em receber oportunidades e lembretes por e-mail e SMS.
+            </p>
+          </div>
           <button class="action">Criar conta</button>
         </div>
         <div class="aux"></div>
@@ -74,6 +81,10 @@ async function fechar() {
   padding: 30px;
 
   .create-account {
+    .options {
+      display: flex;
+    }
+
     .cpf-text-field {
       background-color: transparent !important;
     }
