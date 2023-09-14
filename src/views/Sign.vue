@@ -1,26 +1,40 @@
 <script setup lang="ts">
 import { useTaxIdMask } from "@/composables/TaxIdMask";
 import CreateAccount from "@/components/modais/CreateAccount.vue";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import TextFieldIcon from "@/components/TextFieldIcon.vue";
 import EyeIcon from "@/components/icons/EyeIcon.vue";
 
 const { updateCpfCnpj: loginUpdateCpfCnpj } = useTaxIdMask();
-const { updateCpfCnpj: logonUpdateCpfCnpj } = useTaxIdMask();
+const { updateCpfCnpj: logonUpdateCpfCnpj, cpfCnpj } = useTaxIdMask();
 const modal = ref(false);
 const screenToShow = ref("login");
 function changeScreen() {
   screenToShow.value = screenToShow.value === "login" ? "create" : "login";
 }
 const router = useRouter();
+const route = useRoute();
 const show = ref(false);
 const senha = ref("");
+onMounted(() => {
+  if (route.query.create) {
+    cpfCnpj.value = route.query.create as string;
+    modal.value = true;
+  }
+})
+watch(() => modal.value, (value) => {
+  if (!value) {
+    router.replace({
+      query: {}
+    })
+  }
+})
 </script>
 
 <template>
   <div class="screen">
-    <CreateAccount v-model:status="modal"></CreateAccount>
+    <CreateAccount v-model:status="modal" :cpf="cpfCnpj"></CreateAccount>
     <div class="basecards">
       <div class="card login mr-5" :class="{ screenToShow: screenToShow === 'login' }">
         <h3 class="title">Já possui cadastro?</h3>

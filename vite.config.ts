@@ -6,7 +6,7 @@ import * as path from "path";
 export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const envObj: Record<string, string> = {};
-  envObj["TESTE"] = env.TESTE;
+  envObj["URL_BASE"] = env.URL_BASE;
   return {
     plugins: [vue()],
     server: {

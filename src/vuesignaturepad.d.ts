@@ -28,4 +28,6 @@ declare module 'vue-signature-pad' {
   
     export function VueSignaturePad(Vue: typeof _Vue): void;
     export default VueSignaturePad;
-  }
+}
+
+declare module '@/components/Menu.vue'
