@@ -9,6 +9,7 @@ import EyeIcon from "@/components/icons/EyeIcon.vue";
 import { login } from "@/services/hacka"
 import { IResponseLogin } from "@/models/user"
 import { useUserStore } from "@/stores/user"
+import { useToast } from "vue-toastification";
 
 const userStore = useUserStore();
 
@@ -25,6 +26,7 @@ const show = ref(false);
 const loading = ref(false);
 const senha = ref("");
 onMounted(() => {
+  toast.success('saa')
   if (route.query.create) {
     setCpfCnpj(route.query.create as string);
     if (logonValid.value) {
@@ -39,7 +41,7 @@ watch(() => modal.value, (value) => {
     })
   }
 })
-
+const toast = useToast();
 async function realizarLogin() {
   try {
     loading.value = true;
@@ -50,7 +52,7 @@ async function realizarLogin() {
     userStore.setUser(dataLogin);
     router.push('/dashboard')
   } catch (e) {
-    //TODO ERRO
+    toast.error('Ocorreu um ao tentar fazer o login.')
   } finally {
     loading.value = false
   }

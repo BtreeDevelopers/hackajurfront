@@ -10,7 +10,7 @@ import EyeIcon from "@/components/icons/EyeIcon.vue";
 import { useDateMask } from "@/composables/DateMask";
 import { usePhoneMask } from "@/composables/PhoneMask";
 import { createaccount } from "@/services/hacka"
-import { useToast } from 'vue-toast-notification';
+import { useToast } from 'vue-toastification';
 const props = defineProps<{ status: boolean, cpf: string }>();
 const emit = defineEmits<{ "update:status": [val: boolean], clearCPF: [] }>();
 
@@ -63,13 +63,10 @@ async function criarConta() {
     await createaccount(dataCreate);
     emit("clearCPF");
 
-    toast.success('Conta criada com sucesso!', {
-      duration: 5000,
-      position: "top",
-    })
+    toast.success('Conta criada com sucesso!')
     fechar();
   } catch (e) {
-    console.log(e)
+    toast.error('Ocorreu um ao criar a conta.')
   } finally {
     loading.value = false;
   }

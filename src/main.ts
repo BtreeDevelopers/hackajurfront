@@ -5,9 +5,9 @@ import { router } from "./router";
 import { createPinia } from "pinia";
 import { VueSignaturePad } from "vue-signature-pad";
 import ClickOutside from "./directives/click-outside";
-import ToastPlugin from "vue-toast-notification";
+import Toast from "vue-toastification";
 
-import "vue-toast-notification/dist/theme-default.css";
+import "vue-toastification/dist/index.css";
 
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
@@ -19,7 +19,10 @@ pinia.use(piniaPluginPersistedstate);
 const app = createApp(App);
 app.component("VueSignaturePad", VueSignaturePad);
 app.directive("click-outside", ClickOutside);
-app.use(ToastPlugin);
+app.use(Toast, {
+  timeout: 5000,
+  icon: false,
+});
 app.use(pinia);
 app.use(router);
 app.mount("#app");
