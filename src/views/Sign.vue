@@ -26,7 +26,6 @@ const show = ref(false);
 const loading = ref(false);
 const senha = ref("");
 onMounted(() => {
-  toast.success('saa')
   if (route.query.create) {
     setCpfCnpj(route.query.create as string);
     if (logonValid.value) {

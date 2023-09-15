@@ -22,3 +22,10 @@ export async function createaccount<T = any>(
   });
   return data as T;
 }
+export async function cities<T = any>(city: string): Promise<T> {
+  const { data } = await http({
+    method: "get",
+    url: "/cities/" + city,
+  });
+  return data as T;
+}
