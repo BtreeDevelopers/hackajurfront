@@ -127,7 +127,7 @@ function selectLocal(city: string, uf: string) {
           <h2 class="title">Em qual cidade você está?</h2>
           <CloseBlackIcon @click="fechar"></CloseBlackIcon>
         </div>
-        <TextFieldIcon placeholder="" color="#1B7E6C" v-model="city">
+        <TextFieldIcon placeholder="" color="#1B7E6C" v-model="city" class="local-input">
           <SearchIcon></SearchIcon>
         </TextFieldIcon>
         <div class="meulocal" @click="getLocation">
@@ -162,6 +162,11 @@ function selectLocal(city: string, uf: string) {
     .moldura {
       width: 600px;
       min-height: 50%;
+    }
+
+    .local-input,
+    .local-input :deep(.text-field) {
+      width: 100% !important;
     }
   }
 }
