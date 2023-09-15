@@ -1,14 +1,20 @@
 <script setup lang="ts">
+import Loading from './Loading.vue';
+
+
 withDefaults(
   defineProps<{
     color?: string;
     colorDestaque?: string;
+    colorLoading?: string;
     width?: string;
-    loading?: boolean
+    loading?: boolean;
+    disabled?: boolean;
   }>(),
   {
     color: "#fc0",
     colorDestaque: "#d8ad00",
+    colorLoading: "#fff",
     width: "150px",
   }
 );
@@ -18,8 +24,12 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <button @click="loading ? null : emit('click')" class="button loading" :disabled="loading">
-    <div v-if="loading">loading</div>
+  <button @click="loading || disabled ? null : emit('click')" class="button" :class="{ loading: loading || disabled }"
+    :disabled="loading || disabled">
+    <div v-if="loading" class="base-load">
+
+      <loading :color="colorLoading" :size="0.5"></loading>
+    </div>
     <slot v-else></slot>
   </button>
 </template>
@@ -36,7 +46,15 @@ const emit = defineEmits<{
   height: 40px;
   cursor: pointer;
 
-  &:not(.loading):hover {
+  .base-load {
+    overflow: hidden;
+    margin-top: -5px;
+    height: 96%;
+    display: flex;
+    justify-content: center;
+  }
+
+  &:hover:not(.loading) {
     background: v-bind(colorDestaque);
   }
 

@@ -5,6 +5,20 @@ export function useTaxIdMask() {
   const cpfCnpjWithoutMask = computed(() =>
     cpfCnpj.value ? cpfCnpj.value.replace(/\D/g, "") : ""
   );
+  const setCpfCnpj = (value: string) => {
+    const newVal = value.replace(/[^0-9]/g, "");
+    if (newVal) {
+      if (newVal.length === 11) {
+        cpfCnpj.value = mascaraCpf(newVal);
+      } else if (newVal.length === 14) {
+        cpfCnpj.value = mascaraCnpj(newVal);
+      } else {
+        cpfCnpj.value = newVal;
+      }
+    } else {
+      cpfCnpj.value = "";
+    }
+  };
 
   const updateCpfCnpj = (e: any) => {
     let x = e.target.value.replace(/[^0-9]/g, "");
@@ -50,12 +64,21 @@ export function useTaxIdMask() {
 
   return {
     updateCpfCnpj,
+    setCpfCnpj,
     cpfCnpj,
     cpfCnpjWithoutMask,
     isCpfCnpjValid,
   };
 }
-
+function mascaraCpf(valor: string) {
+  return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "$1.$2.$3-$4");
+}
+function mascaraCnpj(valor: String) {
+  return valor.replace(
+    /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g,
+    "$1.$2.$3/$4-$5"
+  );
+}
 export function validCpf(taxId: string) {
   const cpf = taxId.replace(/\D/g, "");
   if (

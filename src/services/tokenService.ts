@@ -21,12 +21,12 @@ export const obterAccessToken = () => {
 };
 
 export const setToken = (token: string) => {
-  const TTL_TOKEN_EXPIRA_24_HORAS = new Date(
-    new Date().getTime() + 24 * 60 * 60 * 1000
+  const TTL_TOKEN_EXPIRA_2_HORAS = new Date(
+    new Date().getTime() + 2 * 60 * 60 * 1000
   );
 
   cookies.set(COOKIES_KEY, token, {
-    expires: TTL_TOKEN_EXPIRA_24_HORAS,
+    expires: TTL_TOKEN_EXPIRA_2_HORAS,
     sameSite: true,
   });
 

@@ -50,6 +50,7 @@ input[type="checkbox"] {
     background-color: v-bind(backgroundColor);
     /* Not removed via appearance */
     margin: 0;
+    cursor: pointer;
 
     font: inherit;
     color: v-bind(backgroundColor);

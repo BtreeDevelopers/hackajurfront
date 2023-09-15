@@ -3,14 +3,27 @@ import "@/assets/modal.scss";
 import CloseIcon from "../icons/CloseIcon.vue";
 import TextField from "../TextField.vue";
 import Checkbox from "../Checkbox.vue";
-import { ref, watch } from "vue";
+import Button from "../Button.vue";
+import { ref, watch, computed } from "vue";
 import TextFieldIcon from "@/components/TextFieldIcon.vue";
 import EyeIcon from "@/components/icons/EyeIcon.vue";
+import { useDateMask } from "@/composables/DateMask";
+import { usePhoneMask } from "@/composables/PhoneMask";
+import { createaccount } from "@/services/hacka"
+import { useToast } from 'vue-toast-notification';
 const props = defineProps<{ status: boolean, cpf: string }>();
-const emit = defineEmits<{ "update:status": [val: boolean] }>();
+const emit = defineEmits<{ "update:status": [val: boolean], clearCPF: [] }>();
+
+const { updateDateOfBirth, dateOfBirth, isDateOfBirthValid, dateOfBirthWithMask } = useDateMask();
+const { updatePhoneNumber, phoneNumber, isPhoneNumberValid, phoneNumberWithoutMask } = usePhoneMask();
 const visibilidade = ref(false);
 const senha = ref("");
+const email = ref("");
+const nome = ref("");
 const show = ref(false);
+const termos = ref(false);
+const receberAtt = ref(false);
+const loading = ref(false);
 watch(
   () => props.status,
   (val) => {
@@ -21,8 +34,45 @@ watch(
   },
   { immediate: true }
 );
-async function fechar() {
+
+function isValidEmail(email: string) {
+  // Expressão regular para validar endereços de e-mail
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+  return emailPattern.test(email);
+}
+const isValidData = computed(() => {
+  return isDateOfBirthValid.value && nome.value && isPhoneNumberValid.value && email.value && isValidEmail(email.value) && senha.value && termos.value
+})
+function fechar() {
   emit("update:status", false);
+}
+const toast = useToast();
+async function criarConta() {
+  try {
+    loading.value = true;
+    const dataCreate = {
+      "nome": nome.value,
+      "email": email.value,
+      "senha": senha.value,
+      "cpf_cnpj": props.cpf.replace(/\D/g, ""),
+      "celular": phoneNumberWithoutMask.value,
+      "receberatt": receberAtt.value,
+      "dataNascimento": dateOfBirthWithMask.value
+    };
+    await createaccount(dataCreate);
+    emit("clearCPF");
+
+    toast.success('Conta criada com sucesso!', {
+      duration: 5000,
+      position: "top",
+    })
+    fechar();
+  } catch (e) {
+    console.log(e)
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -40,32 +90,52 @@ async function fechar() {
           <p class="mb-2">Crie sua conta agora. É rapidinho!</p>
           <div class="campos-iniciais">
             <TextField class="cpf-text-field" placeholder="*CPF/CNPJ" color="#fff" width="40%" :readonly="true"
-              :value="props.cpf"></TextField>
-            <TextField class="ml-2" placeholder="*Data Nascimento" color="#fff" width="60%"></TextField>
+              :model-value="props.cpf"></TextField>
+            <div style="width: 60%" class="ml-2 mb-2">
+              <TextField placeholder="*Data Nascimento" color="#fff" @input="updateDateOfBirth" width="100%"
+                style="margin-bottom: 2px;">
+              </TextField>
+              <p v-if="!isDateOfBirthValid && dateOfBirth" style="color: #ff9800;font-size: 12px;">Data de nascimento
+                inválida
+              </p>
+            </div>
           </div>
           <div class="campos-iniciais mb-2">
-            <TextField placeholder="*Nome Completo" color="#fff" width="60%"></TextField>
-            <TextField class="ml-2" placeholder="*Telefone celular" color="#fff" width="40%"></TextField>
+            <TextField placeholder="*Nome Completo" v-model="nome" color="#fff" width="60%"></TextField>
+            <div tyle="width: 40%" class="ml-2 mb-2">
+              <TextField placeholder="*Telefone celular" color="#fff" width="100%" @input="updatePhoneNumber"
+                style="margin-bottom: 2px;"></TextField>
+              <p v-if="!isPhoneNumberValid && phoneNumber" style="color: #ff9800;font-size: 12px;">Telefone
+                inválido
+              </p>
+            </div>
           </div>
-          <TextField class="mb-2" placeholder="*Email" width="100%" color="#fff"></TextField>
+          <div class="mb-2">
+
+            <TextField placeholder="*Email" v-model="email" width="100%" color="#fff" style="margin-bottom: 2px;">
+            </TextField>
+            <p v-if="!isValidEmail(email) && email" style="color: #ff9800;font-size: 12px;">Email
+              inválido
+            </p>
+          </div>
           <TextFieldIcon class="mb-2" :type="show ? 'text' : 'password'" placeholder="*Senha" width="100%" color="#fff"
             @click:icon="show = !show" v-model="senha" icon-functional>
             <EyeIcon></EyeIcon>
           </TextFieldIcon>
           <div class="options">
-            <Checkbox background-color="#fff" color="#1B7E6C" size="15px" class="mt-1"></Checkbox>
+            <Checkbox background-color="#fff" color="#1B7E6C" size="15px" class="mt-1" v-model="termos"></Checkbox>
             <p class="mb-2">
               Li e concordo com os <span>Termos</span> e
               <span>Politica de Privacidade</span>.
             </p>
           </div>
           <div class="options mb-5">
-            <Checkbox background-color="#fff" color="#1B7E6C" size="15px" class="mt-1"></Checkbox>
+            <Checkbox background-color="#fff" color="#1B7E6C" size="15px" class="mt-1" v-model="receberAtt"></Checkbox>
             <p>
               Eu concordo em receber oportunidades e lembretes por e-mail e SMS.
             </p>
           </div>
-          <button class="action">Criar conta</button>
+          <Button width="100%" :disabled="!isValidData" :loading="loading" @click="criarConta">Criar conta</Button>
         </div>
         <div class="aux"></div>
       </div>

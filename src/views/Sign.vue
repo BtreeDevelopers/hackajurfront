@@ -12,8 +12,8 @@ import { useUserStore } from "@/stores/user"
 
 const userStore = useUserStore();
 
-const { updateCpfCnpj: loginUpdateCpfCnpj, cpfCnpjWithoutMask: loginTaxId } = useTaxIdMask();
-const { updateCpfCnpj: logonUpdateCpfCnpj, cpfCnpj } = useTaxIdMask();
+const { updateCpfCnpj: loginUpdateCpfCnpj, cpfCnpjWithoutMask: loginTaxId, isCpfCnpjValid: loginValid } = useTaxIdMask();
+const { updateCpfCnpj: logonUpdateCpfCnpj, cpfCnpj, isCpfCnpjValid: logonValid, setCpfCnpj } = useTaxIdMask();
 const modal = ref(false);
 const screenToShow = ref("login");
 function changeScreen() {
@@ -26,8 +26,10 @@ const loading = ref(false);
 const senha = ref("");
 onMounted(() => {
   if (route.query.create) {
-    cpfCnpj.value = route.query.create as string;
-    modal.value = true;
+    setCpfCnpj(route.query.create as string);
+    if (logonValid.value) {
+      modal.value = true;
+    }
   }
 })
 watch(() => modal.value, (value) => {
@@ -57,18 +59,20 @@ async function realizarLogin() {
 
 <template>
   <div class="screen">
-    <CreateAccount v-model:status="modal" :cpf="cpfCnpj"></CreateAccount>
+    <CreateAccount v-model:status="modal" :cpf="cpfCnpj" @clearCPF="() => setCpfCnpj('')"></CreateAccount>
     <div class="basecards">
       <div class="card login mr-5" :class="{ screenToShow: screenToShow === 'login' }">
         <h3 class="title">Já possui cadastro?</h3>
         <p class="description">Para entrar, informe seus dados.</p>
         <input type="text" class="text-field" placeholder="*CPF/CNPJ" @input="loginUpdateCpfCnpj" />
+        <p v-if="!loginValid && loginTaxId" style="color: red;font-size: 12px;">CPF/CNPJ inválido</p>
         <TextFieldIcon :type="show ? 'text' : 'password'" placeholder="*Senha" color="#1e333b" @click:icon="show = !show"
           v-model="senha" icon-functional>
           <EyeIcon color="#055550"></EyeIcon>
         </TextFieldIcon>
         <p class="destaque cursor-pointer mb-6">Esqueci a senha</p>
-        <Button @click="realizarLogin" color="#02a64c" color-destaque="#01612c" class="buttons" :loading="loading">
+        <Button @click="realizarLogin" color="#02a64c" color-destaque="#01612c" class="buttons" :loading="loading"
+          :disabled="!loginValid || !senha">
           Acessar conta
         </Button>
       </div>
@@ -76,10 +80,13 @@ async function realizarLogin() {
         <div>
           <h3 class="title">Não tem cadastro?</h3>
           <p class="description">Crie sua conta agora. É rapidinho!</p>
-          <input type="text" class="text-field" placeholder="*CPF/CNPJ" @input="logonUpdateCpfCnpj" />
+          <input type="text" class="text-field" placeholder="*CPF/CNPJ" @input="logonUpdateCpfCnpj" :value="cpfCnpj" />
+          <p v-if="!logonValid && cpfCnpj" style="color: red;font-size: 12px;">CPF/CNPJ inválido</p>
           <p class="destaque">(?) Identificação</p>
         </div>
-        <button class="action" @click="modal = true">Criar conta</button>
+        <Button @click="modal = true" color="#02a64c" color-destaque="#01612c" class="buttons" :disabled="!logonValid">
+          Criar conta
+        </Button>
       </div>
     </div>
     <p class="button-swap" @click="changeScreen">

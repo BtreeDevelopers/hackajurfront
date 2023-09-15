@@ -37,4 +37,5 @@ export const useUserStore = defineStore("user", {
       this.$router.push("/sign");
     },
   },
+  persist: true,
 });
