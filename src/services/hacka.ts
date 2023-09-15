@@ -29,3 +29,10 @@ export async function cities<T = any>(city: string): Promise<T> {
   });
   return data as T;
 }
+export async function getDividas<T = any>(): Promise<T> {
+  const { data } = await http({
+    method: "get",
+    url: "/divida",
+  });
+  return data as T;
+}
