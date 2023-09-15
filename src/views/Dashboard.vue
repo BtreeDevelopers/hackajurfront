@@ -2,31 +2,21 @@
 import Dividas from "@/components/dashboard/Dividas.vue";
 import Produtos from "@/components/dashboard/Produtos.vue";
 import Detalhamento from "@/components/dashboard/Detalhamento.vue";
-import { ref } from "vue";
-const dividas = [
-  {
-    _id: "1",
-    produto: "Internet Fibra",
-    status: "Não iniciado",
-    saldo: 300,
-    contrato: "48JEH1238",
-  },
-  {
-    _id: "2",
-    produto: "Internet Fibra",
-    status: "Não iniciado",
-    saldo: 300,
-    contrato: "48JEH1238",
-  },
-];
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
+import { computed, ref } from "vue";
+
 const selected = ref("");
+const selectedDetalhe = computed(() => {
+  return userStore.dividas.find((divida) => divida._id === selected.value)
+})
 </script>
 
 <template>
   <div class="dashboard">
-    <Dividas :dividas="dividas" v-model:selected="selected"></Dividas>
-    <Produtos v-if="!selected"></Produtos>
-    <Detalhamento v-else></Detalhamento>
+    <Dividas :dividas="userStore.dividas" v-model:selected="selected"></Dividas>
+    <Produtos v-if="!selectedDetalhe"></Produtos>
+    <Detalhamento v-else :divida="selectedDetalhe"></Detalhamento>
   </div>
 </template>
 

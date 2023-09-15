@@ -1,13 +1,28 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import Card from "./Card.vue";
 import Button from "../Button.vue";
+import IDivida from "@/models/dividas";
+const props = defineProps<{
+  divida: IDivida;
+}>();
 
 const expandir = ref<string>("");
 function selectCard(card: string) {
   expandir.value = expandir.value === card ? "" : card;
 }
-const etapaCompleta = ref(2);
+const status: Record<string, number> = {
+  NaoIniciado: 0,
+  DividaReconhecida: 1,
+  AguardandoNovaProposta: 2,
+  PropostaRecebida: 3,
+  AguardandoAssinaturas: 4,
+  PropostaAprovada: 4,
+  PropostaReprovada: 4,
+}
+const etapaCompleta = computed(() => {
+  return status[props.divida.status] || 0
+})
 
 </script>
 
@@ -35,7 +50,8 @@ const etapaCompleta = ref(2);
     <div class="timeline__item">
       <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 2 }">2</div>
       <div class="timeline__card-content">
-        <Card title="Proposta de Renegociação" :expandir="expandir === 'renegocio'" @click="selectCard('renegocio')">
+        <Card title="Proposta de Renegociação" :expandir="expandir === 'renegocio'" @click="selectCard('renegocio')"
+          :disabled-expand="etapaCompleta <= 1">
           <div class="detail-conhecimento">
             <div class="w-full">
               <p class="text">
@@ -54,7 +70,8 @@ const etapaCompleta = ref(2);
     <div class="timeline__item">
       <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 3 }">3</div>
       <div class="timeline__card-content">
-        <Card title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'" @click="selectCard('proposta')">
+        <Card title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'" @click="selectCard('proposta')"
+          :disabled-expand="etapaCompleta <= 2">
           <div class="detail-conhecimento">
             <div class="w-full">
               <p class="text">
@@ -73,7 +90,8 @@ const etapaCompleta = ref(2);
     <div class="timeline__item">
       <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 4 }">4</div>
       <div class="timeline__card-content">
-        <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')">
+        <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')"
+          :disabled-expand="etapaCompleta <= 3">
           <div class="detail-conhecimento">
             <div class="w-full">
               <p class="text">

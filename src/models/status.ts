@@ -1,11 +1,11 @@
 enum status {
-  NaoIniciado = 0,
-  DividaReconhecida = 1,
-  AguardandoNovaProposta = 2,
-  PropostaRecebida = 3,
-  AguardandoAssinaturas = 4,
-  PropostaAprovada = 5,
-  PropostaReprovada = 6,
+  NaoIniciado = "Não Iniciado",
+  DividaReconhecida = "Dívida reconhecida",
+  AguardandoNovaProposta = "Aguardando nova proposta",
+  PropostaRecebida = "Proposta recebida",
+  AguardandoAssinaturas = "Aguardando assinaturas",
+  PropostaAprovada = "Finalizado, proposta aprovada",
+  PropostaReprovada = "Finalizado, proposta reprovada",
 }
 
 export default status;
