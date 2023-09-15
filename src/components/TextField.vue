@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    placeholder: string;
+    placeholder?: string;
     type?: string;
     modelValue?: any;
     value?: any;
