@@ -16,6 +16,18 @@ export const useUserStore = defineStore("user", {
       city: "",
       uf: "",
     },
+    assinatura: "",
+    iniciais: "",
+    estadoCivil: "",
+    cep: "",
+    uf: "",
+    cidade: "",
+    bairro: "",
+    rua: "",
+    numero: "",
+    tipo: "",
+    complemento: "",
+    fotoPerfil: "",
   }),
   actions: {
     setUser(user: IResponseLogin) {
@@ -28,6 +40,27 @@ export const useUserStore = defineStore("user", {
       this.receberatt = user.user.receberatt;
       this.dataNascimento = user.user.dataNascimento;
       this.dividas = user.dividas;
+    },
+    setAllUser(user: Record<string, any>) {
+      this._id = user._id;
+      this.nome = user.nome;
+      this.email = user.email;
+      this.cpf_cnpj = user.cpf_cnpj;
+      this.celular = user.celular;
+      this.receberatt = user.receberatt;
+      this.dataNascimento = user.dataNascimento;
+      this.assinatura = user.assinatura || "";
+      this.iniciais = user.iniciais || "";
+      this.estadoCivil = user.estadoCivil || "";
+      this.cep = user.cep || "";
+      this.uf = user.uf || "";
+      this.cidade = user.cidade || "";
+      this.bairro = user.bairro || "";
+      this.rua = user.rua || "";
+      this.numero = user.numero || "";
+      this.tipo = user.tipo || "";
+      this.complemento = user.complemento || "";
+      this.fotoPerfil = user.fotoPerfil || "";
     },
     clearUser() {
       const copyLocal = { city: this.local.city, uf: this.local.uf };

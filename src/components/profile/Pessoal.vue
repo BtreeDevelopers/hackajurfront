@@ -5,13 +5,25 @@ import Select from "../Select.vue";
 import Button from "../Button.vue";
 import CloseIcon from "@/components/icons/CloseIconGreen.vue";
 import ModalAssinatura from "@/components/modais/Assinatura.vue"
-import { ref } from "vue";
-const nacionalidade = [
-  {
-    text: "Brasileiro",
-    value: "brasileiro",
-  },
-];
+import { computed, onMounted, ref, watch } from "vue";
+import { useUserStore } from "@/stores/user";
+import { mascaraCpf, mascaraCnpj } from "@/composables/TaxIdMask";
+import { mascaraData } from "@/composables/DateMask";
+import { usePhoneMask } from "@/composables/PhoneMask";
+const userStore = useUserStore();
+const { updatePhoneNumber, phoneNumberWithoutMask, setPhone, phoneNumber } = usePhoneMask();
+onMounted(() => {
+  setPhone(userStore.celular);
+})
+watch(() => phoneNumberWithoutMask.value, (value) => {
+  if (value && value !== userStore.celular) {
+    userStore.celular = value;
+  }
+})
+const taxid = computed(() => {
+  return userStore.cpf_cnpj.length === 11 ? mascaraCpf(userStore.cpf_cnpj) : mascaraCnpj(userStore.cpf_cnpj)
+});
+
 const estadoCivil = [
   {
     text: "Solteiro",
@@ -21,8 +33,55 @@ const estadoCivil = [
     text: "Casado",
     value: "casado",
   },
+  {
+    text: "Divorciado",
+    value: "divorciado",
+  },
+  {
+    text: "Viúvo",
+    value: "viuvo",
+  },
+  {
+    text: "União Estável",
+    value: "uniao estavel",
+  },
 ];
 const modal = ref(false);
+const loading = ref(false);
+function uploadFile() {
+  var input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = () => {
+    const file = (input.files as any)[0];
+    // if (file.size >= 5000000) {
+    //   //IMAGEM PESADA
+    //   return;
+    // }
+    // this.file = file;
+    console.log('file - para api', file);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      // this.image = reader.result;
+
+      userStore.fotoPerfil = reader.result as string;
+    };
+  };
+  input.click();
+}
+async function enviarDados() {
+  try {
+    loading.value = true;
+
+
+  } finally {
+    loading.value = false;
+
+  }
+}
+
 </script>
 
 <template>
@@ -30,46 +89,50 @@ const modal = ref(false);
     <ModalAssinatura v-model:status="modal" nome="Teste Teste"></ModalAssinatura>
     <p class="title">Dados Pessoais</p>
     <div class="base">
-      <div class="picture">
-        <img class="foto" src="@/assets/foto.png" />
+      <div class="picture" @click="uploadFile">
+        <img class="foto" :src="userStore.fotoPerfil" v-if="userStore.fotoPerfil" />
+        <img class="foto void" src="@/assets/foto.png" v-else />
         <div class="filter">
           <CameraIcon></CameraIcon>
         </div>
       </div>
       <div class="data">
-        <TextField :readonly="true" value="Nome Teste" placeholder="Nome Completo" color="#1B7E6C" width="100%">
+        <TextField :readonly="true" value="Nome Teste" placeholder="Nome Completo" color="#1B7E6C" width="100%"
+          v-model="userStore.nome">
         </TextField>
         <div class="divider">
-          <TextField class="input-divider-1" :readonly="true" value="000.000.000-00" placeholder="CPF" color="#1B7E6C">
+          <TextField class="input-divider-1" :readonly="true" :model-value="taxid" placeholder="CPF" color="#1B7E6C">
           </TextField>
-          <TextField class="input-divider-2" :readonly="true" value="00/00/0000" placeholder="Data de Nascimento"
-            color="#1B7E6C"></TextField>
+          <TextField class="input-divider-2" :readonly="true" :model-value="mascaraData(userStore.dataNascimento)"
+            placeholder="Data de Nascimento" color="#1B7E6C"></TextField>
         </div>
-        <Select placeholder="Nacionalidade" color="#1B7E6C" model-value="brasileiro" :readonly="true"
-          :items="nacionalidade" width="100%"></Select>
-        <Select placeholder="Estado Civil" color="#1B7E6C" model-value="solteiro" :items="estadoCivil"
+        <TextField placeholder="Nacionalidade" color="#1B7E6C" width="100%" readonly model-value="Brasileiro"></TextField>
+        <Select placeholder="Estado Civil" color="#1B7E6C" :items="estadoCivil" v-model="userStore.estadoCivil"
           width="100%"></Select>
-        <TextField placeholder="*Telefone celular" color="#1B7E6C" width="100%"></TextField>
-        <TextField placeholder="Email" color="#1B7E6C" width="100%"></TextField>
+        <TextField placeholder="*Telefone celular" color="#1B7E6C" width="100%" @input="updatePhoneNumber"
+          :model-value="phoneNumber"></TextField>
+        <TextField placeholder="Email" color="#1B7E6C" width="100%" v-model="userStore.email"></TextField>
 
         <div class="assinaturas">
           <div class="model">
             <p class="assinaturas-titulo">Assinatura</p>
             <div class="assinaturas-canva" @click="modal = true">
               <CloseIcon class="icon-close" />
-              <img src="@/assets/void.png" alt="" width="200" height="100">
+              <img :src="userStore.assinatura" v-if="userStore.assinatura" alt="" width="200" height="100">
+              <img src="@/assets/void.png" v-else alt="" width="200" height="100">
             </div>
           </div>
           <div class="model">
             <p class="assinaturas-titulo">Inicias</p>
             <div class="assinaturas-canva" @click="modal = true">
               <CloseIcon class="icon-close" />
-              <img src="@/assets/void.png" alt="" width="200" height="100">
+              <img :src="userStore.iniciais" v-if="userStore.iniciais" alt="" width="200" height="100">
+              <img src="@/assets/void.png" v-else alt="" width="200" height="100">
             </div>
           </div>
         </div>
         <div class="action">
-          <Button>Salvar</Button>
+          <Button @click="enviarDados">Salvar</Button>
         </div>
       </div>
     </div>
@@ -162,6 +225,11 @@ const modal = ref(false);
       position: absolute;
       height: 80px;
       width: 80px;
+    }
+
+    .void {
+      border: 1px solid #055550;
+      border-radius: 10px;
     }
 
     .filter {

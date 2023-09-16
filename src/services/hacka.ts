@@ -36,3 +36,21 @@ export async function getDividas<T = any>(): Promise<T> {
   });
   return data as T;
 }
+export async function getUserDetail<T = any>(id: string): Promise<T> {
+  const { data } = await http({
+    method: "get",
+    url: "/user/users/id/" + id,
+  });
+  return data as T;
+}
+export async function updateUser<T = any>(payload: FormData): Promise<T> {
+  const { data } = await http({
+    method: "post",
+    url: "/user/editaccount",
+    data: payload,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return data as T;
+}

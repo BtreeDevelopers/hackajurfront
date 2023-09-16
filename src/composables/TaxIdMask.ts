@@ -70,10 +70,10 @@ export function useTaxIdMask() {
     isCpfCnpjValid,
   };
 }
-function mascaraCpf(valor: string) {
+export function mascaraCpf(valor: string) {
   return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "$1.$2.$3-$4");
 }
-function mascaraCnpj(valor: String) {
+export function mascaraCnpj(valor: String) {
   return valor.replace(
     /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g,
     "$1.$2.$3/$4-$5"

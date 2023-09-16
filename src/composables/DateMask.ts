@@ -69,3 +69,20 @@ function isValidDate(dateString: string) {
 
   return true;
 }
+export function mascaraData(data: string) {
+  // Divide a data nos componentes ano, mês e dia
+  const partes = data.split("-");
+
+  // Verifica se a data tem o formato esperado (YYYY-MM-DD)
+  if (partes.length === 3) {
+    const ano = partes[0];
+    const mes = partes[1];
+    const dia = partes[2];
+
+    // Formata a data no formato "DD/MM/YYYY"
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  // Se a data não estiver no formato esperado, retorna a data original
+  return data;
+}
