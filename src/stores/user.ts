@@ -1,5 +1,4 @@
 import divida from "@/models/dividas";
-import status from "@/models/status";
 import { IResponseLogin } from "@/models/user";
 import { setToken, removerTokenCookies } from "@/services/tokenService";
 import { defineStore } from "pinia";
