@@ -5,10 +5,10 @@ import Button from "../Button.vue";
 import { ref, onMounted, watch } from "vue";
 import { useTaxIdMask } from "@/composables/TaxIdMask";
 import { useUserStore } from "@/stores/user";
-import { updateUser } from "@/services/hacka";
-import { useToast } from "vue-toastification";
+// import { updateUser } from "@/services/hacka";
+// import { useToast } from "vue-toastification";
 const userStore = useUserStore();
-const toast = useToast();
+// const toast = useToast();
 const { setCpfCnpj, updateCpfCnpj, cpfCnpj, cpfCnpjWithoutMask } =
   useTaxIdMask();
 onMounted(() => {

@@ -7,10 +7,9 @@ import TextField from "@/components/TextField.vue";
 import Select from "@/components/Select.vue";
 import { useTaxIdMask } from "@/composables/TaxIdMask";
 import { useCepMask } from "@/composables/CepMask";
-import { getLocal } from "@/services/cep";
 import { useToast } from "vue-toastification";
 const { updateCpfCnpj, cpfCnpj } = useTaxIdMask(true);
-const { updateCep, cepWithoutMask, isCepValid, cep } = useCepMask();
+const { updateCep, isCepValid, cep } = useCepMask();
 const toast = useToast();
 const props = defineProps<{
   status: boolean;
@@ -199,7 +198,7 @@ async function obterLocalizacao() {
   try {
     if (!isCepValid.value) return;
     loadingCep.value = true;
-    const { data } = await getLocal(cepWithoutMask.value);
+    // const { data } = await getLocal(cepWithoutMask.value);
     // userStore.uf = data.state;
     // userStore.cidade = data.city;
     // userStore.bairro = data.neighborhood;

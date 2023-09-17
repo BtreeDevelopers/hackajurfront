@@ -7,9 +7,9 @@ import { ref, watch } from "vue";
 const props = defineProps<{
   status: boolean;
 }>();
-const emit = defineEmits<{
-  "update:status": [val: boolean];
-}>();
+// const emit = defineEmits<{
+//   "update:status": [val: boolean];
+// }>();
 const visibilidade = ref(false);
 watch(
   () => props.status,
@@ -21,9 +21,9 @@ watch(
   },
   { immediate: true }
 );
-function fechar() {
-  emit("update:status", false);
-}
+// function fechar() {
+//   emit("update:status", false);
+// }
 const image = ref("");
 function criarInputFile() {
   const input = document.createElement("input");
