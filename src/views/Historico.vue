@@ -27,7 +27,10 @@ function abrirURL(value: string) {
 }
 </script>
 <template>
-  <div class="historico">
+  <div v-if="userStore.dividasHistorico.length === 0">
+    <div class="banner mt-3 mx-5">Não tem histórico de negociação.</div>
+  </div>
+  <div v-else class="historico">
     <div
       class="card"
       :class="{ expanded: expandir === divida._id }"
@@ -69,6 +72,14 @@ function abrirURL(value: string) {
 </template>
 
 <style scoped lang="scss">
+.banner {
+  border-radius: 10px;
+  background: linear-gradient(90deg, #055550 0%, #1b7e6c 100%);
+  padding: 40px 50px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
 .historico {
   padding-top: 25px;
   padding-bottom: 25px;

@@ -5,6 +5,13 @@ import Button from "../Button.vue";
 import IDivida from "@/models/dividas";
 import Propostas from "../modais/Propostas.vue";
 import QRCode from "../modais/QRCode.vue";
+import { useToast } from "vue-toastification";
+import { useUserStore } from "@/stores/user";
+import { gerarProposta, getUserDetail } from "@/services/hacka";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const toast = useToast();
+const userStore = useUserStore();
 const props = defineProps<{
   divida: IDivida;
 }>();
@@ -27,9 +34,63 @@ const etapaCompleta = computed(() => {
 });
 const modal = ref(false);
 const modal2 = ref(false);
-function iniciarProcesso() {
-  //MUDAR STATUS PARA INICIADO NO BACKEND
-  modal.value = true;
+function getTipo(url: string) {
+  const listType = [
+    "garantia_real",
+    "fiador",
+    "sem_parcela",
+    "pix",
+    "cartao_credito",
+    "boleto",
+    "cartao_debito",
+    "caucao",
+  ];
+  return listType.find((el) => url.includes(el));
+}
+const loading = ref(false);
+async function iniciarProcesso() {
+  try {
+    loading.value = true;
+    const dataUser = await getUserDetail(userStore._id);
+    userStore.setAllUser(dataUser.user);
+    if (!userStore.allDataIsComplete) {
+      toast.info("Por favor atualize suas informações de perfil.");
+      router.push("/profile");
+      return;
+    }
+    const data = await gerarProposta<{
+      termos: IDivida;
+      garantia_real: number;
+      boleto: number;
+      pix: number;
+      cartao_debito: number;
+      fiador: number;
+      parcelamento_s_garantia: number;
+      caucao: number;
+      cartao_credito: number;
+    }>(props.divida._id);
+    const tipo = data.termos.propostas.map((el) => {
+      const tp =
+        getTipo(el) === "sem_parcela" ? "parcelamento_s_garantia" : getTipo(el);
+      const desconto = (data as any)[tp!];
+      return {
+        tipo: tp!.replace("_", " "),
+        valor: data.termos.saldo - (data.termos.saldo * desconto) / 100,
+        url: el,
+        indicada:
+          (userStore.cpf_cnpj.length === 11 && tp === "cartao_credito") ||
+          (userStore.cpf_cnpj.length === 14 && tp === "fiador"),
+      };
+    });
+    userStore.propostas = tipo;
+
+    modal.value = true;
+  } catch (e) {
+    console.log(e);
+    toast.error("Ocorreu um erro ao gerar as propostas.");
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -58,7 +119,9 @@ function iniciarProcesso() {
               </p>
             </div>
             <div class="w-full action">
-              <Button @click="iniciarProcesso">Iniciar</Button>
+              <Button @click="iniciarProcesso" :loading="loading"
+                >Iniciar</Button
+              >
             </div>
           </div>
         </Card>

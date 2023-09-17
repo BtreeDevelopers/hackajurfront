@@ -54,3 +54,10 @@ export async function updateUser<T = any>(payload: FormData): Promise<T> {
   });
   return data as T;
 }
+export async function gerarProposta<T = any>(payload: string): Promise<T> {
+  const { data } = await http({
+    method: "get",
+    url: "/divida/gerarcontratos/" + payload,
+  });
+  return data as T;
+}

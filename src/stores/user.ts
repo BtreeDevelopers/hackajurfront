@@ -4,6 +4,12 @@ import { setToken, removerTokenCookies } from "@/services/tokenService";
 import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => ({
+    propostas: [] as {
+      tipo: string;
+      valor: number;
+      url: string;
+      indicada: boolean;
+    }[],
     _id: "",
     nome: "",
     email: "",
@@ -73,6 +79,19 @@ export const useUserStore = defineStore("user", {
     },
   },
   getters: {
+    allDataIsComplete: (state) =>
+      [
+        state.email,
+        state.celular,
+        state.estadoCivil,
+        state.cep,
+        state.uf,
+        state.cidade,
+        state.bairro,
+        state.rua,
+        state.numero,
+        state.complemento,
+      ].every((el) => el !== ""),
     isPJ: (state) => state.cpf_cnpj.length === 14,
     dividasAtivas: (state) =>
       state.dividas.filter(

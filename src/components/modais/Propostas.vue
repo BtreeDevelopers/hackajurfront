@@ -8,6 +8,8 @@ import Select from "@/components/Select.vue";
 import { useTaxIdMask } from "@/composables/TaxIdMask";
 import { useCepMask } from "@/composables/CepMask";
 import { useToast } from "vue-toastification";
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
 const { updateCpfCnpj, cpfCnpj } = useTaxIdMask(true);
 const { updateCep, isCepValid, cep } = useCepMask();
 const toast = useToast();
@@ -28,36 +30,8 @@ watch(
   },
   { immediate: true }
 );
-const listaPropostas = [
-  {
-    tipo: "Parcelado",
-    saldo: 270,
-    documento:
-      "https://firebasestorage.googleapis.com/v0/b/hackajuralgar.appspot.com/o/proposta1_ThalysRicardo_2023-09-1616%3A18%3A55.784063.pdf?alt=media&token=2b4f45d6-0b06-4030-9a3a-a549f412cda3",
-    indicada: true,
-  },
-  {
-    tipo: "Caução",
-    saldo: 200,
-    documento:
-      "https://firebasestorage.googleapis.com/v0/b/hackajuralgar.appspot.com/o/proposta1_ThalysRicardo_2023-09-1616%3A18%3A55.784063.pdf?alt=media&token=2b4f45d6-0b06-4030-9a3a-a549f412cda3",
-    indicada: false,
-  },
-  {
-    tipo: "Fiador",
-    saldo: 200,
-    documento:
-      "https://firebasestorage.googleapis.com/v0/b/hackajuralgar.appspot.com/o/proposta1_ThalysRicardo_2023-09-1616%3A18%3A55.784063.pdf?alt=media&token=2b4f45d6-0b06-4030-9a3a-a549f412cda3",
-    indicada: false,
-  },
-  {
-    tipo: "Boleto",
-    saldo: 200,
-    documento:
-      "https://firebasestorage.googleapis.com/v0/b/hackajuralgar.appspot.com/o/proposta1_ThalysRicardo_2023-09-1616%3A18%3A55.784063.pdf?alt=media&token=2b4f45d6-0b06-4030-9a3a-a549f412cda3",
-    indicada: false,
-  },
-];
+userStore.propostas;
+
 function maskMoney(valor: number) {
   const formatoMoeda = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -226,7 +200,7 @@ async function obterLocalizacao() {
             @click="selectedProposta = proposta.tipo"
             :class="{ selectedProposta: selectedProposta === proposta.tipo }"
             class="card"
-            v-for="(proposta, index) in listaPropostas"
+            v-for="(proposta, index) in userStore.propostas"
             :key="proposta.tipo"
           >
             <div>
@@ -237,7 +211,7 @@ async function obterLocalizacao() {
                 </div>
                 <p
                   class="card-button"
-                  @click.stop="abrirDoc(proposta.documento, index)"
+                  @click.stop="abrirDoc(proposta.url, index)"
                 >
                   Visualizar
                 </p>
@@ -249,14 +223,14 @@ async function obterLocalizacao() {
             <div>
               <p class="card-bottom-text">Novo saldo devido</p>
               <div class="card-bottom-value">
-                <p>{{ maskMoney(proposta.saldo) }}</p>
+                <p>{{ maskMoney(proposta.valor) }}</p>
               </div>
             </div>
           </div>
         </div>
         <div class="bottom">
           <p class="button-outline" @click="recusarPropostas">
-            Recusar todas propostas, deseja receber uma ligação?
+            Recusar todas propostas. Quero contestar.
           </p>
           <Button @click="selecionarProposta">Escolher proposta</Button>
         </div>

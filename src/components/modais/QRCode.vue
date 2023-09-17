@@ -33,7 +33,7 @@ function fechar() {
           <CloseIcon @click="fechar" class="icon"></CloseIcon>
         </div>
         <div style="text-align: center" class="mb-10">
-          <img src="@/assets/qr_code1.png" alt="" />
+          <img src="@/assets/qr_code1.png" alt="" width="300" />
         </div>
         <div></div>
       </div>
