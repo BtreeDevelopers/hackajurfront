@@ -135,10 +135,9 @@ const valoresBase: Record<number, string> = {
   80: "otimo",
 };
 const imageUrl = computed(() => {
-  const score = 10;
   let status = "";
   for (const valor in valoresBase) {
-    if (score >= parseInt(valor)) {
+    if (userStore.score >= parseInt(valor)) {
       status = valoresBase[valor];
     } else {
       break; // Saia do loop assim que encontrar o status adequado

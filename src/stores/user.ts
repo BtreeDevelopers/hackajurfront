@@ -28,6 +28,7 @@ export const useUserStore = defineStore("user", {
     tipo: "",
     complemento: "",
     fotoPerfil: "",
+    score: 0,
   }),
   actions: {
     setUser(user: IResponseLogin) {
@@ -61,6 +62,7 @@ export const useUserStore = defineStore("user", {
       this.tipo = user.tipo || "";
       this.complemento = user.complemento || "";
       this.fotoPerfil = user.fotoPerfil || "";
+      this.score = user.score || 0;
     },
     clearUser() {
       const copyLocal = { city: this.local.city, uf: this.local.uf };

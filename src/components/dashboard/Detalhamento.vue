@@ -26,7 +26,7 @@ const etapaCompleta = computed(() => {
   return status[props.divida.status] || 0;
 });
 const modal = ref(false);
-const modal2 = ref(true);
+const modal2 = ref(false);
 function iniciarProcesso() {
   //MUDAR STATUS PARA INICIADO NO BACKEND
   modal.value = true;
