@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import Card from "./Card.vue";
 import Button from "../Button.vue";
 import IDivida from "@/models/dividas";
@@ -29,9 +29,13 @@ const status: Record<string, number> = {
   FinalizadoCompleto: 2,
   FinalizadoIncompleto: 2,
 };
-const etapaCompleta = computed(() => {
-  return status[props.divida.status] || 0;
+const etapaCompleta = ref(0);
+onMounted(() => {
+  etapaCompleta.value = status[props.divida.status];
 });
+function setaEtapa(n: number) {
+  etapaCompleta.value = n;
+}
 const modal = ref(false);
 const modal2 = ref(false);
 function getTipo(url: string) {
@@ -83,7 +87,7 @@ async function iniciarProcesso() {
       };
     });
     userStore.propostas = tipo;
-
+    setaEtapa(1);
     modal.value = true;
   } catch (e) {
     console.log(e);
@@ -96,7 +100,7 @@ async function iniciarProcesso() {
 
 <template>
   <QRCode v-model:status="modal2"></QRCode>
-  <Propostas v-model:status="modal"></Propostas>
+  <Propostas v-model:status="modal" @atualizaEtapa="setaEtapa"></Propostas>
   <div class="timeline">
     <div class="timeline__item">
       <div
@@ -148,7 +152,9 @@ async function iniciarProcesso() {
               <p class="text">Clique para visualizar as propostas recebidas.</p>
             </div>
             <div class="w-full action">
-              <Button class="mr-5">Assinatura Fiador</Button>
+              <Button class="mr-5" @click="modal2 = true"
+                >Assinatura Fiador</Button
+              >
               <Button>Assinar contrato</Button>
             </div>
           </div>

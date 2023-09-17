@@ -18,6 +18,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{
   "update:status": [val: boolean];
+  atualizaEtapa: [val: number];
 }>();
 const visibilidade = ref(false);
 watch(
@@ -53,7 +54,7 @@ function abrirDoc(link: string, index: number) {
 const selectedProposta = ref("");
 function selecionarProposta() {
   if (!selectedProposta.value) return;
-  if (selectedProposta.value === "Parcelado") {
+  if (selectedProposta.value === "cartao credito") {
     screen.value = "cartao";
   } else if (selectedProposta.value === "Fiador") {
     screen.value = "fiador";
@@ -182,6 +183,10 @@ async function obterLocalizacao() {
   } finally {
     loadingCep.value = false;
   }
+}
+function salvarEtapa() {
+  emit("atualizaEtapa", 2);
+  fechar();
 }
 </script>
 
@@ -337,7 +342,7 @@ async function obterLocalizacao() {
           </div>
         </div>
         <div style="text-align: end">
-          <Button>Enviar</Button>
+          <Button @click="salvarEtapa">Enviar</Button>
         </div>
       </div>
       <div class="fiador" v-else-if="screen === 'fiador'">
