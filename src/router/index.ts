@@ -4,6 +4,7 @@ import Sign from "@/views/Sign.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Profile from "@/views/Profile.vue";
 import Reader from "@/views/Reader.vue";
+import Historico from "@/views/Historico.vue";
 import { obterAccessToken } from "@/services/tokenService";
 
 const routes: RouteRecordRaw[] = [
@@ -42,6 +43,14 @@ const routes: RouteRecordRaw[] = [
     component: Reader,
     meta: {
       header: "login",
+    },
+  },
+  {
+    path: "/historico",
+    component: Historico,
+    meta: {
+      header: "user",
+      auth: true,
     },
   },
 ];

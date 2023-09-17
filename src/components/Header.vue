@@ -4,7 +4,7 @@ import ArrowDownIcon from "@/components/icons/ArrowDownIcon.vue";
 import AlgarIcon from "@/components/icons/AlgarIcon.vue";
 import UserIcon from "./icons/UserIcon.vue";
 import Localization from "./modais/Localization.vue";
-import Menu from "@/components/Menu.vue"
+import Menu from "@/components/Menu.vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { computed, ref, watch, onMounted } from "vue";
@@ -48,13 +48,23 @@ onMounted(() => {
     </div>
     <div class="header-base py-3">
       <div class="internal">
-        <AlgarIcon></AlgarIcon>
+        <RouterLink to="/">
+          <AlgarIcon></AlgarIcon>
+        </RouterLink>
         <div class="sub-menu">
-          <RouterLink to="/sign" class="user cursor-pointer" v-if="route.meta.header === 'login'">
+          <RouterLink
+            to="/sign"
+            class="user cursor-pointer"
+            v-if="route.meta.header === 'login'"
+          >
             <UserIcon></UserIcon>
             <p class="login mx-1">Login</p>
           </RouterLink>
-          <RouterLink to="/" class="user cursor-pointer" v-else-if="route.meta.header === 'voltar'">
+          <RouterLink
+            to="/"
+            class="user cursor-pointer"
+            v-else-if="route.meta.header === 'voltar'"
+          >
             <div class="rotate">
               <ArrowDownIcon></ArrowDownIcon>
             </div>
@@ -68,8 +78,12 @@ onMounted(() => {
             </div>
             <template v-slot:menu>
               <div class="base-menu">
-                <RouterLink to="/dashboard" class="texto historico">Histórico de dividas</RouterLink>
-                <RouterLink to="/profile" class="texto perfil">Perfil</RouterLink>
+                <RouterLink to="/historico" class="texto historico"
+                  >Histórico de dividas</RouterLink
+                >
+                <RouterLink to="/profile" class="texto perfil"
+                  >Perfil</RouterLink
+                >
                 <a @click="userStore.clearUser" class="texto sair">Sair</a>
               </div>
             </template>
@@ -91,7 +105,7 @@ onMounted(() => {
   width: 160px;
 
   .texto {
-    color: #1B7E6C;
+    color: #1b7e6c;
     font-size: 12px;
     font-weight: 700;
     padding: 15px 10px;

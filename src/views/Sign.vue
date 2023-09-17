@@ -6,15 +6,26 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import TextFieldIcon from "@/components/TextFieldIcon.vue";
 import EyeIcon from "@/components/icons/EyeIcon.vue";
-import { login } from "@/services/hacka"
-import { IResponseLogin } from "@/models/user"
-import { useUserStore } from "@/stores/user"
+import { login } from "@/services/hacka";
+import { IResponseLogin } from "@/models/user";
+import { useUserStore } from "@/stores/user";
 import { useToast } from "vue-toastification";
 
 const userStore = useUserStore();
 
-const { updateCpfCnpj: loginUpdateCpfCnpj, cpfCnpjWithoutMask: loginTaxId, isCpfCnpjValid: loginValid } = useTaxIdMask();
-const { updateCpfCnpj: logonUpdateCpfCnpj, cpfCnpj, isCpfCnpjValid: logonValid, setCpfCnpj } = useTaxIdMask();
+const {
+  updateCpfCnpj: loginUpdateCpfCnpj,
+  cpfCnpjWithoutMask: loginTaxId,
+  isCpfCnpjValid: loginValid,
+  setCpfCnpj: loginSetCpfCnpj,
+  cpfCnpj: logincpfcnpj,
+} = useTaxIdMask();
+const {
+  updateCpfCnpj: logonUpdateCpfCnpj,
+  cpfCnpj,
+  isCpfCnpjValid: logonValid,
+  setCpfCnpj,
+} = useTaxIdMask();
 const modal = ref(false);
 const screenToShow = ref("login");
 function changeScreen() {
@@ -26,66 +37,117 @@ const show = ref(false);
 const loading = ref(false);
 const senha = ref("");
 onMounted(() => {
-  if (route.query.create) {
+  if (route.query.algariano) {
+    loginSetCpfCnpj("34652632002");
+    senha.value = "1";
+    realizarLogin();
+  } else if (route.query.create) {
     setCpfCnpj(route.query.create as string);
     if (logonValid.value) {
       modal.value = true;
     }
   }
-})
-watch(() => modal.value, (value) => {
-  if (!value) {
-    router.replace({
-      query: {}
-    })
+});
+watch(
+  () => modal.value,
+  (value) => {
+    if (!value) {
+      router.replace({
+        query: {},
+      });
+    }
   }
-})
+);
 const toast = useToast();
 async function realizarLogin() {
   try {
     loading.value = true;
     const dataLogin = await login<IResponseLogin>({
       cpf: loginTaxId.value,
-      senha: senha.value
+      senha: senha.value,
     });
     userStore.setUser(dataLogin);
-    router.push('/dashboard')
+    router.push("/dashboard");
   } catch (e) {
-    toast.error('Ocorreu um ao tentar fazer o login.')
+    toast.error("Ocorreu um ao tentar fazer o login.");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
 
 <template>
   <div class="screen">
-    <CreateAccount v-model:status="modal" :cpf="cpfCnpj" @clearCPF="() => setCpfCnpj('')"></CreateAccount>
+    <CreateAccount
+      v-model:status="modal"
+      :cpf="cpfCnpj"
+      @clearCPF="() => setCpfCnpj('')"
+    ></CreateAccount>
     <div class="basecards">
-      <div class="card login mr-5" :class="{ screenToShow: screenToShow === 'login' }">
+      <div
+        class="card login mr-5"
+        :class="{ screenToShow: screenToShow === 'login' }"
+      >
         <h3 class="title">Já possui cadastro?</h3>
         <p class="description">Para entrar, informe seus dados.</p>
-        <input type="text" class="text-field" placeholder="*CPF/CNPJ" @input="loginUpdateCpfCnpj" />
-        <p v-if="!loginValid && loginTaxId" style="color: red;font-size: 12px;">CPF/CNPJ inválido</p>
-        <TextFieldIcon :type="show ? 'text' : 'password'" placeholder="*Senha" color="#1e333b" @click:icon="show = !show"
-          v-model="senha" icon-functional>
+        <input
+          type="text"
+          class="text-field"
+          placeholder="*CPF/CNPJ"
+          :value="logincpfcnpj"
+          @input="loginUpdateCpfCnpj"
+        />
+        <p v-if="!loginValid && loginTaxId" style="color: red; font-size: 12px">
+          CPF/CNPJ inválido
+        </p>
+        <TextFieldIcon
+          :type="show ? 'text' : 'password'"
+          placeholder="*Senha"
+          color="#1e333b"
+          @click:icon="show = !show"
+          v-model="senha"
+          icon-functional
+        >
           <EyeIcon color="#055550"></EyeIcon>
         </TextFieldIcon>
         <p class="destaque cursor-pointer mb-6">Esqueci a senha</p>
-        <Button @click="realizarLogin" color="#02a64c" color-destaque="#01612c" class="buttons" :loading="loading"
-          :disabled="!loginValid || !senha">
+        <Button
+          @click="realizarLogin"
+          color="#02a64c"
+          color-destaque="#01612c"
+          class="buttons"
+          :loading="loading"
+          :disabled="!loginValid || !senha"
+        >
           Acessar conta
         </Button>
       </div>
-      <div class="card create space" :class="{ screenToShow: screenToShow === 'create' }">
+      <div
+        class="card create space"
+        :class="{ screenToShow: screenToShow === 'create' }"
+      >
         <div>
           <h3 class="title">Não tem cadastro?</h3>
           <p class="description">Crie sua conta agora. É rapidinho!</p>
-          <input type="text" class="text-field" placeholder="*CPF/CNPJ" @input="logonUpdateCpfCnpj" :value="cpfCnpj" />
-          <p v-if="!logonValid && cpfCnpj" style="color: red;font-size: 12px;">CPF/CNPJ inválido</p>
+          <input
+            type="text"
+            class="text-field"
+            placeholder="*CPF/CNPJ"
+            @input="logonUpdateCpfCnpj"
+            :value="cpfCnpj"
+          />
+          <p v-if="!logonValid && cpfCnpj" style="color: red; font-size: 12px">
+            CPF/CNPJ inválido
+          </p>
           <p class="destaque">(?) Identificação</p>
         </div>
-        <Button @click="modal = true" color="#02a64c" color-destaque="#01612c" class="buttons" :disabled="!logonValid">
+        <Button
+          @click="modal = true"
+          color="#02a64c"
+          color-destaque="#01612c"
+          class="buttons"
+          :disabled="!logonValid"
+        >
           Criar conta
         </Button>
       </div>

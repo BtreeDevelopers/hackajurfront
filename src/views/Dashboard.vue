@@ -33,8 +33,11 @@ const selectedDetalhe = computed(() => {
     <Loading :size="2"></Loading>
   </div>
   <div class="dashboard" v-else>
-    <Dividas :dividas="userStore.dividas" v-model:selected="selected"></Dividas>
-    <Produtos v-if="!userStore.dividas.length"></Produtos>
+    <Dividas
+      :dividas="userStore.dividasAtivas"
+      v-model:selected="selected"
+    ></Dividas>
+    <Produtos v-if="!userStore.dividasAtivas.length"></Produtos>
     <Detalhamento
       v-else-if="selectedDetalhe"
       :divida="selectedDetalhe"

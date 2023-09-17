@@ -1,8 +1,7 @@
-import status from "@/models/status";
 interface divida {
   _id: string;
   nome: string;
-  status: status;
+  status: string;
   saldo: number;
   contrato: string;
   userId: string;

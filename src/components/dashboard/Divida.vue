@@ -9,13 +9,13 @@ const emit = defineEmits<{
 }>();
 const statusList: Record<string, string> = {
   NaoIniciado: "Não Iniciado",
-  DividaReconhecida: "Dívida reconhecida",
-  AguardandoNovaProposta: "Aguardando nova proposta",
-  PropostaRecebida: "Proposta recebida",
-  AguardandoAssinaturas: "Aguardando assinaturas",
-  PropostaAprovada: "Finalizado, proposta aprovada",
-  PropostaReprovada: "Finalizado, proposta reprovada",
-}
+  Iniciado: "Iniciado",
+  PropostaSelecionada: "Proposta Selecionada",
+  AguardandoAssinaturas: "Aguardando Assinatura(s)",
+  AguardandoPagamento: "Aguardando Pagamento",
+  FinalizadoCompleto: "Finalizado Completo",
+  FinalizadoIncompleto: "Finalizado Incompleto",
+};
 
 function formatCurrency(number: number) {
   // Converte o número para uma string com duas casas decimais
@@ -27,17 +27,26 @@ function formatCurrency(number: number) {
   const decimalPart = parts[1];
 
   // Adiciona pontos como separadores de milhares
-  const integerWithSeparators = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const integerWithSeparators = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    "."
+  );
 
   // Retorna a string formatada no formato brasileiro
-  return 'R$ ' + integerWithSeparators + "," + decimalPart;
+  return "R$ " + integerWithSeparators + "," + decimalPart;
 }
 </script>
 
 <template>
-  <div class="divida" :class="{ selected: selected }" @click="emit('select', props.divida._id)">
+  <div
+    class="divida"
+    :class="{ selected: selected }"
+    @click="emit('select', props.divida._id)"
+  >
     <p class="produto">{{ props.divida.nome }}</p>
-    <p class="status"><span>Status:</span> {{ statusList[props.divida.status] }}</p>
+    <p class="status">
+      <span>Status:</span> {{ statusList[props.divida.status] }}
+    </p>
     <p class="saldo">Saldo devido</p>
     <p class="saldo-card">{{ formatCurrency(props.divida.saldo) }}</p>
     <p class="contrato">Contrato: {{ props.divida.contrato }}</p>
@@ -96,9 +105,11 @@ function formatCurrency(number: number) {
 
 .selected {
   border: 1px solid #000;
-  background: linear-gradient(0deg,
+  background: linear-gradient(
+      0deg,
       rgba(0, 0, 0, 0.6) 0%,
-      rgba(0, 0, 0, 0.6) 100%),
+      rgba(0, 0, 0, 0.6) 100%
+    ),
     linear-gradient(90deg, #055550 0%, #1b7e6c 100%);
 }
 </style>

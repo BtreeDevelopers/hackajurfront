@@ -1,4 +1,5 @@
 import divida from "@/models/dividas";
+import status from "@/models/status";
 import { IResponseLogin } from "@/models/user";
 import { setToken, removerTokenCookies } from "@/services/tokenService";
 import { defineStore } from "pinia";
@@ -74,6 +75,18 @@ export const useUserStore = defineStore("user", {
   },
   getters: {
     isPJ: (state) => state.cpf_cnpj.length === 14,
+    dividasAtivas: (state) =>
+      state.dividas.filter(
+        (el) =>
+          el.status !== "FinalizadoCompleto" &&
+          el.status !== "FinalizadoIncompleto"
+      ),
+    dividasHistorico: (state) =>
+      state.dividas.filter(
+        (el) =>
+          el.status === "FinalizadoCompleto" ||
+          el.status === "FinalizadoIncompleto"
+      ),
   },
   persist: true,
 });
