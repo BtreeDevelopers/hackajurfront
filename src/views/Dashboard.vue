@@ -3,15 +3,15 @@ import Dividas from "@/components/dashboard/Dividas.vue";
 import Produtos from "@/components/dashboard/Produtos.vue";
 import Detalhamento from "@/components/dashboard/Detalhamento.vue";
 import Loading from "@/components/Loading.vue";
-import IDividas from "@/models/dividas"
+import IDividas from "@/models/dividas";
 import { useUserStore } from "@/stores/user";
 import { getDividas } from "@/services/hacka";
 import { computed, ref, onMounted } from "vue";
 const userStore = useUserStore();
 const loading = ref(false);
 onMounted(() => {
-  updateDividas()
-})
+  updateDividas();
+});
 
 async function updateDividas() {
   try {
@@ -24,8 +24,8 @@ async function updateDividas() {
 }
 const selected = ref("");
 const selectedDetalhe = computed(() => {
-  return userStore.dividas.find((divida) => divida._id === selected.value)
-})
+  return userStore.dividas.find((divida) => divida._id === selected.value);
+});
 </script>
 
 <template>
@@ -34,8 +34,11 @@ const selectedDetalhe = computed(() => {
   </div>
   <div class="dashboard" v-else>
     <Dividas :dividas="userStore.dividas" v-model:selected="selected"></Dividas>
-    <Produtos v-if="!selectedDetalhe"></Produtos>
-    <Detalhamento v-else :divida="selectedDetalhe"></Detalhamento>
+    <Produtos v-if="!userStore.dividas.length"></Produtos>
+    <Detalhamento
+      v-else-if="selectedDetalhe"
+      :divida="selectedDetalhe"
+    ></Detalhamento>
   </div>
 </template>
 

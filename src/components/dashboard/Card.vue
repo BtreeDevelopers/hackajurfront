@@ -3,7 +3,7 @@ import ArrowDownGreenIcon from "@/components/icons/ArrowDownGreenIcon.vue";
 defineProps<{
   title: string;
   expandir?: boolean;
-  disabledExpand?: boolean
+  disabledExpand?: boolean;
 }>();
 const emit = defineEmits<{
   click: [];
@@ -13,8 +13,13 @@ const emit = defineEmits<{
 <template>
   <div class="card" @click="disabledExpand ? null : emit('click')">
     <div class="base">
-      <p class="title">{{ title }}</p>
-      <ArrowDownGreenIcon class="arrow" :class="{ 'arrow-rotate': expandir }"></ArrowDownGreenIcon>
+      <p class="title" :class="{ disabledExpand: disabledExpand }">
+        {{ title }}
+      </p>
+      <ArrowDownGreenIcon
+        class="arrow"
+        :class="{ 'arrow-rotate': expandir }"
+      ></ArrowDownGreenIcon>
     </div>
     <div class="body" v-if="expandir" @click.prevent.stop>
       <slot></slot>
@@ -52,6 +57,9 @@ const emit = defineEmits<{
     color: #1b7e6c;
     font-size: 18px;
     font-weight: 700;
+  }
+  .disabledExpand {
+    color: #636365;
   }
 }
 </style>

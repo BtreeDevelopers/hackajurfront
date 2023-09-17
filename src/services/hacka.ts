@@ -45,7 +45,7 @@ export async function getUserDetail<T = any>(id: string): Promise<T> {
 }
 export async function updateUser<T = any>(payload: FormData): Promise<T> {
   const { data } = await http({
-    method: "post",
+    method: "patch",
     url: "/user/editaccount",
     data: payload,
     headers: {

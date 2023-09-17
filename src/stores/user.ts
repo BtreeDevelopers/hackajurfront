@@ -13,8 +13,8 @@ export const useUserStore = defineStore("user", {
     dataNascimento: "",
     dividas: [] as divida[],
     local: {
-      city: "",
-      uf: "",
+      city: "Uberlândia",
+      uf: "MG",
     },
     assinatura: "",
     iniciais: "",
@@ -69,6 +69,9 @@ export const useUserStore = defineStore("user", {
       removerTokenCookies();
       this.$router.push("/sign");
     },
+  },
+  getters: {
+    isPJ: (state) => state.cpf_cnpj.length === 14,
   },
   persist: true,
 });

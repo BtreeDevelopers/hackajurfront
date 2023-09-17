@@ -33,13 +33,23 @@ onMounted(() => {
     <div v-if="props.dividas.length === 0" class="banner">
       Parabéns, você está em dia!
     </div>
-    <div v-else>
-      <p class="title">Dívidas em aberto</p>
-      <div class="list-dividas">
-        <Divida v-for="divida in props.dividas" :key="divida._id" :divida="divida" :selected="selecionado === divida._id"
-          @select="(id) => (selecionado = id)"></Divida>
+    <template v-else>
+      <div class="banner mb-2">
+        Fique em dia, tenha acesso a descontos e ofertas especiais da Algar.
       </div>
-    </div>
+      <div>
+        <p class="title">Dívidas em aberto</p>
+        <div class="list-dividas">
+          <Divida
+            v-for="divida in props.dividas"
+            :key="divida._id"
+            :divida="divida"
+            :selected="selecionado === divida._id"
+            @select="(id) => (selecionado = id)"
+          ></Divida>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 

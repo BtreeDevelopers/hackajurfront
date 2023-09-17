@@ -1,92 +1,27 @@
 <script setup lang="ts">
 import TextField from "../TextField.vue";
-import Select from "../Select.vue";
 import Button from "../Button.vue";
 import { getLocal } from "@/services/cep";
 import { ref, onMounted, watch } from "vue";
 import { useCepMask } from "@/composables/CepMask";
 import { useUserStore } from "@/stores/user";
+import { updateUser } from "@/services/hacka";
+import { useToast } from "vue-toastification";
 const userStore = useUserStore();
+const toast = useToast();
 
-const { updateCep, cepWithoutMask, isCepValid, setCep } = useCepMask();
+const { updateCep, cepWithoutMask, isCepValid, setCep, cep } = useCepMask();
 onMounted(() => {
   setCep(userStore.cep);
-})
-watch(() => cepWithoutMask.value, (value) => {
-  if (value !== userStore.cep) {
-    userStore.cep = value;
+});
+watch(
+  () => cepWithoutMask.value,
+  (value) => {
+    if (value !== userStore.cep) {
+      userStore.cep = value;
+    }
   }
-})
-const tipo = [
-  {
-    text: "Casa",
-    value: "casa",
-  },
-  {
-    text: "Apartamento",
-    value: "apartamento",
-  },
-  {
-    text: "Box",
-    value: "box",
-  },
-  {
-    text: "Caixa Postal",
-    value: "caixapostal",
-  },
-  {
-    text: "Chacara",
-    value: "chacara",
-  },
-  {
-    text: "Condominio",
-    value: "condominio",
-  },
-  {
-    text: "Conjunto",
-    value: "conjunto",
-  },
-  {
-    text: "Edificio",
-    value: "edificio",
-  },
-  {
-    text: "Fazenda",
-    value: "fazenda",
-  },
-  {
-    text: "Undos",
-    value: "undos",
-  },
-  {
-    text: "Galeria",
-    value: "galeria",
-  },
-  {
-    text: "KM",
-    value: "km",
-  },
-  {
-    text: "Quadra",
-    value: "quadra",
-  },
-  {
-    text: "Sala",
-    value: "sala",
-  },
-  {
-    text: "Setor",
-    value: "setor",
-  },
-  {
-    text: "Shopping",
-    value: "shopping",
-  },
-  {
-    text: "Sitio",
-    value: "sitio",
-  },
-];
+);
 
 const loadingCep = ref(false);
 async function obterLocalizacao() {
@@ -99,8 +34,31 @@ async function obterLocalizacao() {
     userStore.bairro = data.neighborhood;
     userStore.rua = data.street;
   } catch (error) {
+    toast.error("Erro ao obter localização");
   } finally {
     loadingCep.value = false;
+  }
+}
+const loading = ref(false);
+async function enviarDados() {
+  try {
+    loading.value = true;
+    const data = new FormData();
+    data.append("userId", userStore._id);
+    data.append("cep", userStore.cep);
+    data.append("uf", userStore.uf);
+    data.append("cidade", userStore.cidade);
+    data.append("bairro", userStore.bairro);
+    data.append("rua", userStore.rua);
+    data.append("numero", userStore.numero);
+    data.append("complemento", userStore.complemento);
+
+    await updateUser(data);
+    toast.success("Dados de endereço atualizados com sucesso.");
+  } catch (e) {
+    toast.error("Erro ao atualizar dados de endereço");
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -110,28 +68,68 @@ async function obterLocalizacao() {
     <p class="title">Dados de endereço</p>
     <div class="base">
       <div class="divider-cep">
-        <TextField placeholder="CEP" color="#1B7E6C" width="100%" @input="updateCep"></TextField>
-        <p v-if="loadingCep" style="color: red">loading</p>
-        <Button v-else @click="obterLocalizacao">Buscar</Button>
+        <TextField
+          placeholder="CEP"
+          color="#1B7E6C"
+          width="100%"
+          @input="updateCep"
+          :model-value="cep"
+        ></TextField>
+        <Button @click="obterLocalizacao" :loading="loadingCep">Buscar</Button>
       </div>
-      <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank">
+      <a
+        href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+        target="_blank"
+      >
         <p class="destaque">Não sabe seu CEP?</p>
       </a>
       <div class="divider">
-        <TextField class="input-divider-1" :readonly="true" placeholder="UF" color="#1B7E6C" v-model="userStore.uf">
+        <TextField
+          class="input-divider-1"
+          :readonly="true"
+          placeholder="UF"
+          color="#1B7E6C"
+          v-model="userStore.uf"
+        >
         </TextField>
-        <TextField class="input-divider-2" :readonly="true" placeholder="Cidade" color="#1B7E6C"
-          v-model="userStore.cidade">
+        <TextField
+          class="input-divider-2"
+          :readonly="true"
+          placeholder="Cidade"
+          color="#1B7E6C"
+          v-model="userStore.cidade"
+        >
         </TextField>
       </div>
-      <TextField :readonly="true" placeholder="Bairro" color="#1B7E6C" width="100%" v-model="userStore.bairro">
+      <TextField
+        :readonly="true"
+        placeholder="Bairro"
+        color="#1B7E6C"
+        width="100%"
+        v-model="userStore.bairro"
+      >
       </TextField>
-      <TextField :readonly="true" placeholder="Rua" color="#1B7E6C" width="100%" v-model="userStore.rua"></TextField>
-      <TextField placeholder="Número" color="#1B7E6C" width="100%" v-model="userStore.numero"></TextField>
-      <Select placeholder="Tipo" color="#1B7E6C" :items="tipo" width="100%" v-model="userStore.tipo"></Select>
-      <TextField placeholder="Complemento" color="#1B7E6C" width="100%" v-model="userStore.complemento"></TextField>
+      <TextField
+        :readonly="true"
+        placeholder="Rua"
+        color="#1B7E6C"
+        width="100%"
+        v-model="userStore.rua"
+      ></TextField>
+      <TextField
+        placeholder="Número"
+        color="#1B7E6C"
+        width="100%"
+        v-model="userStore.numero"
+      ></TextField>
+      <TextField
+        placeholder="Complemento"
+        color="#1B7E6C"
+        width="100%"
+        v-model="userStore.complemento"
+      ></TextField>
       <div class="action">
-        <Button>Salvar</Button>
+        <Button @click="enviarDados" :loading="loading">Salvar</Button>
       </div>
     </div>
   </div>
@@ -153,7 +151,7 @@ async function obterLocalizacao() {
     .divider-cep {
       display: flex;
 
-      >input {
+      > input {
         margin-right: 10px;
       }
     }

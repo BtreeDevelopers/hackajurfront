@@ -29,7 +29,7 @@ const prods = [
 <template>
   <div class="produtos">
     <h3 class="titulo">Aproveite o máximo da Algar</h3>
-    <p class="body">Soluções e novidades exclusivas da Algar Telecom</p>
+    <p class="body">Soluções e novidades exclusivas da Algar</p>
     <div class="list-produtos">
       <Produto v-for="prod in prods" :key="prod.img" :produto="prod"></Produto>
     </div>

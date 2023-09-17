@@ -2,7 +2,7 @@
 
 <template>
   <div class="footer py-2">
-    <p>© Copyright 2023 - Algar Telecom</p>
+    <p>© Copyright 2023 - Algar</p>
   </div>
 </template>
 

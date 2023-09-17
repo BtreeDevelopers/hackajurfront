@@ -5,9 +5,18 @@ import CloseIcon from "@/components/icons/CloseIconGreen.vue";
 import UploadIcon from "@/components/icons/UploadIcon.vue";
 import Button from "@/components/Button.vue";
 import TextField from "@/components/TextField.vue";
-import Signature from '@/components/Signature.vue';
-const props = defineProps<{ status: boolean, nome: string }>();
-const emit = defineEmits<{ "update:status": [val: boolean] }>();
+import Signature from "@/components/Signature.vue";
+const props = defineProps<{
+  status: boolean;
+  nome: string;
+  assinatura: string;
+  sigla: string;
+}>();
+const emit = defineEmits<{
+  "update:status": [val: boolean];
+  "update:assinatura": [val: string];
+  "update:sigla": [val: string];
+}>();
 const visibilidade = ref(false);
 watch(
   () => props.status,
@@ -20,10 +29,10 @@ watch(
   { immediate: true }
 );
 const sigla = computed(() => {
-  const palavras = props.nome.split(' ');
+  const palavras = props.nome.split(" ");
 
   // Inicialize uma variável para armazenar as iniciais
-  let iniciais = '';
+  let iniciais = "";
 
   // Itere sobre cada palavra e adicione a inicial à string de iniciais
   for (const palavra of palavras) {
@@ -32,21 +41,36 @@ const sigla = computed(() => {
 
   // Retorne as iniciais em maiúsculas
   return iniciais;
-})
+});
 
 const signaturePad = ref<InstanceType<typeof Signature> | null>(null);
 const siglaPad = ref<InstanceType<typeof Signature> | null>(null);
-const selected = ref('Desenhar')
+const selected = ref("Desenhar");
 function fechar() {
+  signaturePad.value?.clear();
+  siglaPad.value?.clear();
   emit("update:status", false);
 }
 function salvarAssinatura() {
-
-  fechar()
+  fechar();
 }
-const assinaturaImg = ref('');
-const siglaImg = ref('');
-function uploadFile(tipo: 'assinatura' | 'sigla') {
+const assinaturaImg = ref("");
+const siglaImg = ref("");
+watch(
+  () => props.assinatura,
+  () => {
+    assinaturaImg.value = props.assinatura;
+  },
+  { immediate: true }
+);
+watch(
+  () => props.sigla,
+  () => {
+    siglaImg.value = props.sigla;
+  },
+  { immediate: true }
+);
+function uploadFile(tipo: "assinatura" | "sigla") {
   var input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
@@ -57,43 +81,70 @@ function uploadFile(tipo: 'assinatura' | 'sigla') {
     //   return;
     // }
     // this.file = file;
-    console.log('file - para api', file);
+    // console.log("file - para api", file);
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
       // this.image = reader.result;
-      if (tipo == 'assinatura')
-        assinaturaImg.value = reader.result as string;
-      else
-        siglaImg.value = reader.result as string;
+      if (tipo == "assinatura") assinaturaImg.value = reader.result as string;
+      else siglaImg.value = reader.result as string;
     };
   };
   input.click();
 }
+watch(
+  () => assinaturaImg.value,
+  (value) => {
+    emit("update:assinatura", value);
+  }
+);
+watch(
+  () => siglaImg.value,
+  (value) => {
+    emit("update:sigla", value);
+  }
+);
 </script>
 
 <template>
   <div :class="visibilidade ? 'janela aberta' : 'janela fechada'">
     <div class="moldura">
-      <div class="create-account">
+      <div class="assinatura">
         <div class="header">
           <h2 class="title">Personalize a sua assinatura</h2>
           <CloseIcon @click="fechar" class="icon"></CloseIcon>
         </div>
-        <div>
-          <TextField readonly :modelValue="props.nome" width="50%" class="mr-10"></TextField>
-          <TextField readonly :modelValue="sigla" width="40%"></TextField>
+        <div class="infos">
+          <TextField
+            readonly
+            :modelValue="props.nome"
+            width="50%"
+            class="local-input"
+          ></TextField>
+          <TextField
+            readonly
+            :modelValue="sigla"
+            width="40%"
+            class="local-input"
+          ></TextField>
         </div>
 
         <div class="slider">
-          <div class="mr-5" :class="{ selected: selected == 'Desenhar' }" @click="selected = 'Desenhar'">
+          <div
+            class="mr-5"
+            :class="{ selected: selected == 'Desenhar' }"
+            @click="selected = 'Desenhar'"
+          >
             <p>Desenhar</p>
-            <hr v-if="selected === 'Desenhar'">
+            <hr v-if="selected === 'Desenhar'" />
           </div>
-          <div @click="selected = 'Carregar'" :class="{ selected: selected == 'Carregar' }">
+          <div
+            @click="selected = 'Carregar'"
+            :class="{ selected: selected == 'Carregar' }"
+          >
             <p>Carregar</p>
-            <hr v-if="selected === 'Carregar'">
+            <hr v-if="selected === 'Carregar'" />
           </div>
         </div>
 
@@ -102,36 +153,62 @@ function uploadFile(tipo: 'assinatura' | 'sigla') {
             <p class="text">Assinatura</p>
             <div class="assinaturas-canva large">
               <CloseIcon class="icon-close" @click="signaturePad?.clear()" />
-              <Signature ref="signaturePad" width="290px" height="150px" />
+              <Signature
+                ref="signaturePad"
+                width="290px"
+                height="150px"
+                @signature="(v) => (assinaturaImg = v)"
+              />
             </div>
           </div>
           <div>
             <p class="text">Iniciais</p>
             <div class="assinaturas-canva">
               <CloseIcon class="icon-close" @click="siglaPad?.clear()" />
-              <Signature ref="siglaPad" width="260px" height="150px" />
+              <Signature
+                ref="siglaPad"
+                width="260px"
+                height="150px"
+                @signature="(v) => (siglaImg = v)"
+              />
             </div>
           </div>
         </div>
         <div class="draw-canva" v-if="selected === 'Carregar'">
           <div>
             <p class="text">Assinatura</p>
-            <div class="upload-canvas large" :class="{ uploaded: !!assinaturaImg }" @click="uploadFile('assinatura')">
-              <CloseIcon class="icon-close" v-if="assinaturaImg" @click.prevent.stop="assinaturaImg = ''" />
+            <div
+              class="upload-canvas large"
+              :class="{ uploaded: !!assinaturaImg }"
+              @click="uploadFile('assinatura')"
+            >
+              <CloseIcon
+                class="icon-close"
+                v-if="assinaturaImg"
+                @click.prevent.stop="assinaturaImg = ''"
+              />
               <UploadIcon v-if="!assinaturaImg"></UploadIcon>
-              <img :src="assinaturaImg" v-else>
+              <img :src="assinaturaImg" v-else />
             </div>
           </div>
           <div>
             <p class="text">Iniciais</p>
-            <div class="upload-canvas" :class="{ uploaded: !!siglaImg }" @click="uploadFile('sigla')">
-              <CloseIcon class="icon-close" v-if="siglaImg" @click.prevent.stop="siglaImg = ''" />
+            <div
+              class="upload-canvas"
+              :class="{ uploaded: !!siglaImg }"
+              @click="uploadFile('sigla')"
+            >
+              <CloseIcon
+                class="icon-close"
+                v-if="siglaImg"
+                @click.prevent.stop="siglaImg = ''"
+              />
               <UploadIcon v-if="!siglaImg"></UploadIcon>
-              <img :src="siglaImg" v-else>
+              <img :src="siglaImg" v-else />
             </div>
           </div>
         </div>
-        <div style="text-align: end;">
+        <div style="text-align: end">
           <Button @click="salvarAssinatura">Salvar assinatura</Button>
         </div>
       </div>
@@ -145,6 +222,11 @@ function uploadFile(tipo: 'assinatura' | 'sigla') {
   background: #fff;
   color: #000;
   padding: 30px;
+  overflow: auto;
+  .infos {
+    display: flex;
+    justify-content: space-between;
+  }
 
   .header {
     display: flex;
@@ -184,17 +266,15 @@ function uploadFile(tipo: 'assinatura' | 'sigla') {
     margin-top: 10px;
 
     .text {
-      color: #1B7E6C;
+      color: #1b7e6c;
       font-size: 12px;
       font-weight: 700;
       margin-bottom: 10px;
     }
   }
 
-
-
   .assinaturas-canva {
-    border: 1px solid #1B7E6C;
+    border: 1px solid #1b7e6c;
     border-radius: 10px;
     position: relative;
     width: 230px;
@@ -215,9 +295,9 @@ function uploadFile(tipo: 'assinatura' | 'sigla') {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px dashed #1B7E6C;
+    border: 1px dashed #1b7e6c;
     border-radius: 10px;
-    background-color: #F7F6F9;
+    background-color: #f7f6f9;
     width: 230px;
     height: 150px;
     cursor: pointer;
@@ -235,23 +315,39 @@ function uploadFile(tipo: 'assinatura' | 'sigla') {
   }
 
   .uploaded {
-    border: 1px solid #1B7E6C;
+    border: 1px solid #1b7e6c;
   }
 
   .large {
     width: 290px;
   }
-
 }
 
-@media (max-width: 750px) {}
+@media (max-width: 750px) {
+}
 
 @media (max-width: 600px) {
   .moldura {
     padding: 30px 15px;
     height: 100%;
+    width: 100%;
+    .assinatura {
+      width: 100%;
+    }
+    .infos {
+      flex-direction: column;
+      .local-input,
+      .local-input :deep(.text-field) {
+        width: 100% !important;
+      }
+    }
+    .draw-canva {
+      display: flex;
+      flex-direction: column;
+      & > div:first-child {
+        margin-bottom: 10px;
+      }
+    }
   }
-
-
 }
 </style>

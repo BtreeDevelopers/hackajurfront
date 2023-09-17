@@ -41,8 +41,7 @@ const routes: RouteRecordRaw[] = [
     path: "/reader",
     component: Reader,
     meta: {
-      header: "user",
-      auth: true,
+      header: "login",
     },
   },
 ];
@@ -59,7 +58,7 @@ router.beforeEach((to, _, next) => {
       path: "/sign",
     });
   }
-  if (!to.meta.auth && isAuth) {
+  if (!to.meta.auth && isAuth && to.path !== "/reader") {
     return next({
       path: "/dashboard",
     });

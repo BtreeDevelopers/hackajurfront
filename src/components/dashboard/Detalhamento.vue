@@ -3,6 +3,8 @@ import { ref, computed } from "vue";
 import Card from "./Card.vue";
 import Button from "../Button.vue";
 import IDivida from "@/models/dividas";
+import Propostas from "../modais/Propostas.vue";
+import QRCode from "../modais/QRCode.vue";
 const props = defineProps<{
   divida: IDivida;
 }>();
@@ -13,93 +15,76 @@ function selectCard(card: string) {
 }
 const status: Record<string, number> = {
   NaoIniciado: 0,
-  DividaReconhecida: 1,
-  AguardandoNovaProposta: 2,
-  PropostaRecebida: 3,
-  AguardandoAssinaturas: 4,
-  PropostaAprovada: 4,
-  PropostaReprovada: 4,
-}
+  Iniciado: 0,
+  PropostaSelecionada: 1,
+  AguardandoAssinaturas: 1,
+  AguardandoPagamento: 2,
+  FinalizadoCompleto: 2,
+  FinalizadoIncompleto: 2,
+};
 const etapaCompleta = computed(() => {
-  return status[props.divida.status] || 0
-})
-
+  return status[props.divida.status] || 0;
+});
+const modal = ref(false);
+const modal2 = ref(true);
+function iniciarProcesso() {
+  //MUDAR STATUS PARA INICIADO NO BACKEND
+  modal.value = true;
+}
 </script>
 
 <template>
+  <QRCode v-model:status="modal2"></QRCode>
+  <Propostas v-model:status="modal"></Propostas>
   <div class="timeline">
     <div class="timeline__item">
-      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 1 }">1</div>
+      <div
+        class="timeline__card-number"
+        :class="{ etapaCompleta: etapaCompleta >= 1 }"
+      >
+        1
+      </div>
       <div class="timeline__card-content">
-        <Card title="Conhecimento de dívida" :expandir="expandir === 'conhecimento'" @click="selectCard('conhecimento')">
+        <Card
+          title="Proposta de Renegociação"
+          :expandir="expandir === 'renegocio'"
+          @click="selectCard('renegocio')"
+        >
           <div class="detail-conhecimento">
             <div class="w-full">
               <p class="text">
-                Preencha as informações necessárias para reconhecer a dívida e iniciar a negociação dela.
+                Preencha as informações necessárias para verificar as opções de
+                negociação disponíveis.
               </p>
             </div>
             <div class="w-full action">
-              <Button>Iniciar</Button>
+              <Button @click="iniciarProcesso">Iniciar</Button>
             </div>
           </div>
         </Card>
       </div>
     </div>
-    <div class="timeline__step-line">
-    </div>
+    <div class="timeline__step-line"></div>
+
     <div class="timeline__item">
-      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 2 }">2</div>
-      <div class="timeline__card-content">
-        <Card title="Proposta de Renegociação" :expandir="expandir === 'renegocio'" @click="selectCard('renegocio')"
-          :disabled-expand="etapaCompleta <= 1">
-          <div class="detail-conhecimento">
-            <div class="w-full">
-              <p class="text">
-                Preencha as informações necessárias para verificar as opções de negociação disponíveis.
-              </p>
-            </div>
-            <div class="w-full action">
-              <Button>Iniciar</Button>
-            </div>
-          </div>
-        </Card>
+      <div
+        class="timeline__card-number"
+        :class="{ etapaCompleta: etapaCompleta >= 2 }"
+      >
+        2
       </div>
-    </div>
-    <div class="timeline__step-line">
-    </div>
-    <div class="timeline__item">
-      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 3 }">3</div>
       <div class="timeline__card-content">
-        <Card title="Aceitar/Recusar Proposta" :expandir="expandir === 'proposta'" @click="selectCard('proposta')"
-          :disabled-expand="etapaCompleta <= 2">
+        <Card
+          title="Assinaturas ao contrato"
+          :expandir="expandir === 'assinatura'"
+          @click="selectCard('assinatura')"
+          :disabled-expand="etapaCompleta <= 0"
+        >
           <div class="detail-conhecimento">
             <div class="w-full">
-              <p class="text">
-                Clique para visualizar as propostas recebidas.
-              </p>
+              <p class="text">Clique para visualizar as propostas recebidas.</p>
             </div>
             <div class="w-full action">
-              <Button>Visualizar propostas</Button>
-            </div>
-          </div>
-        </Card>
-      </div>
-    </div>
-    <div class="timeline__step-line">
-    </div>
-    <div class="timeline__item">
-      <div class="timeline__card-number" :class="{ etapaCompleta: etapaCompleta >= 4 }">4</div>
-      <div class="timeline__card-content">
-        <Card title="Assinaturas ao contrato" :expandir="expandir === 'assinatura'" @click="selectCard('assinatura')"
-          :disabled-expand="etapaCompleta <= 3">
-          <div class="detail-conhecimento">
-            <div class="w-full">
-              <p class="text">
-                Clique para visualizar as propostas recebidas.
-              </p>
-            </div>
-            <div class="w-full action">
-              <Button class="mr-5">Assinatura Avalista</Button>
               <Button class="mr-5">Assinatura Fiador</Button>
               <Button>Assinar contrato</Button>
             </div>
@@ -107,8 +92,7 @@ const etapaCompleta = computed(() => {
         </Card>
       </div>
     </div>
-    <div class="timeline__step-line">
-    </div>
+    <div class="timeline__step-line"></div>
   </div>
 </template>
 <style lang="scss">
@@ -158,7 +142,6 @@ const etapaCompleta = computed(() => {
       background-color: #ddd;
       left: 19px;
       z-index: 0;
-
     }
 
     &:nth-last-child(2):before {
@@ -171,7 +154,7 @@ const etapaCompleta = computed(() => {
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background-color: #D9D9D9;
+      background-color: #d9d9d9;
       text-align: center;
       font-size: 14px;
       color: #055550;
@@ -181,7 +164,7 @@ const etapaCompleta = computed(() => {
 
       &.etapaCompleta {
         background-color: #055550;
-        color: #FFF;
+        color: #fff;
       }
     }
 

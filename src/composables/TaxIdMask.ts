@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 
-export function useTaxIdMask() {
+export function useTaxIdMask(disableCnpj = false) {
   const cpfCnpj = ref("");
   const cpfCnpjWithoutMask = computed(() =>
     cpfCnpj.value ? cpfCnpj.value.replace(/\D/g, "") : ""
@@ -10,7 +10,7 @@ export function useTaxIdMask() {
     if (newVal) {
       if (newVal.length === 11) {
         cpfCnpj.value = mascaraCpf(newVal);
-      } else if (newVal.length === 14) {
+      } else if (!disableCnpj && newVal.length === 14) {
         cpfCnpj.value = mascaraCnpj(newVal);
       } else {
         cpfCnpj.value = newVal;
@@ -22,21 +22,23 @@ export function useTaxIdMask() {
 
   const updateCpfCnpj = (e: any) => {
     let x = e.target.value.replace(/[^0-9]/g, "");
-    x = e.target.value
-      .replace(/\D/g, "")
-      .match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})/);
-    e.target.value = !x[2]
-      ? x[1]
-      : x[1] +
-        "." +
-        x[2] +
-        (x[3] ? "." : "") +
-        x[3] +
-        (x[4] ? "/" : x[4]) +
-        x[4] +
-        (x[5] ? "-" + x[5] : "");
+    if (!disableCnpj) {
+      x = e.target.value
+        .replace(/\D/g, "")
+        .match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})/);
+      e.target.value = !x[2]
+        ? x[1]
+        : x[1] +
+          "." +
+          x[2] +
+          (x[3] ? "." : "") +
+          x[3] +
+          (x[4] ? "/" : x[4]) +
+          x[4] +
+          (x[5] ? "-" + x[5] : "");
+    }
 
-    if (e.target.value.length < 15) {
+    if (e.target.value.length < 15 || disableCnpj) {
       x = e.target.value
         .replace(/\D/g, "")
         .match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
@@ -49,6 +51,7 @@ export function useTaxIdMask() {
           x[3] +
           (x[4] ? "-" + x[4] : "");
     }
+
     cpfCnpj.value = e.target.value;
   };
   const isCpfCnpjValid = computed(() => {

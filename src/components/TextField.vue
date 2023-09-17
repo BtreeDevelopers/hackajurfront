@@ -18,15 +18,24 @@ const props = withDefaults(
 );
 const emit = defineEmits<{
   "update:modelValue": [val: any];
-  "input": [val: any];
+  input: [val: any];
   "click:icon": [];
+  focus: [];
+  blur: [];
 }>();
 </script>
 
 <template>
-  <input :type="props.type" class="text-field" :placeholder="props.placeholder"
-    @input="(e) => { emit('update:modelValue', (e.target as any).value); emit('input', e) }" :value="modelValue"
-    :readonly="readonly" />
+  <input
+    :type="props.type"
+    class="text-field"
+    :placeholder="props.placeholder"
+    @focus="emit('focus')"
+    @blur="emit('blur')"
+    @input="(e) => { emit('update:modelValue', (e.target as any).value); emit('input', e) }"
+    :value="modelValue"
+    :readonly="readonly"
+  />
 </template>
 
 <style scoped lang="scss">
