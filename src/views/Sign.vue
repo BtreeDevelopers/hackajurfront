@@ -38,8 +38,8 @@ const loading = ref(false);
 const senha = ref("");
 onMounted(() => {
   if (route.query.algariano) {
-    loginSetCpfCnpj("34652632002");
-    senha.value = "1";
+    loginSetCpfCnpj("26524492064");
+    senha.value = "algar2100";
     realizarLogin();
   } else if (route.query.create) {
     setCpfCnpj(route.query.create as string);
